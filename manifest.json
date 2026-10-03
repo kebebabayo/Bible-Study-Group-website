@@ -1,0 +1,10 @@
+{
+  "name": "Bible Study Group",
+  "short_name": "Bible Study",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f7f3ed",
+  "theme_color": "#0b5d2a",
+  "orientation": "any",
+  "icons": []
+}

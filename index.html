@@ -1,0 +1,2608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#15803d">
+<title>Bible Study Group</title>
+<style>
+:root{
+  --bg:#fdf8f8;--panel:#ffffff;--panel2:#fef2f2;--line:#fecaca;
+  --text:#2d3748;--muted:#718096;--accent:#dc2626;--ok:#16a34a;--danger:#b91c1c;
+  --green:#16a34a;--green-dark:#15803d;--radius:12px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{margin:0;color:var(--text);
+  font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,sans-serif;
+  overscroll-behavior-y:none;
+  background:#fdf8f8;}
+/* ── GREEN RECTANGLE at top ── */
+.top-green-bar{
+  position:fixed;top:0;left:0;right:0;height:150px;z-index:0;
+  background:#16a34a;
+}
+h1,h2,h3{margin:0 0 10px;line-height:1.25}
+h1{font-size:22px}h2{font-size:19px}h3{font-size:16px}
+p{margin:0 0 10px}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.tiny{font-size:12px}
+.center{text-align:center}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(45,55,72,.5);backdrop-filter:blur(4px);
+  z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;}
+.modal-box{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+  padding:20px;width:100%;max-width:340px;box-shadow:0 10px 40px rgba(0,0,0,.1);}
+.modal-box h3{margin:0 0 8px;font-size:17px}
+.modal-box p{margin:0 0 20px;font-size:14px;color:var(--muted);line-height:1.45}
+.modal-box .actions{display:flex;gap:8px;justify-content:flex-end}
+
+.bible-modal .modal-box{max-width:700px;max-height:90vh;height:90vh;display:flex;flex-direction:column;padding:18px;border-radius:18px;}
+@media(max-width:600px){.bible-modal .modal-box{border-radius:18px 18px 0 0;height:100dvh;max-height:100dvh;margin-top:auto;}.bible-modal{padding:0;}}
+.bible-content{flex:1;overflow-y:auto;font-size:16.5px;line-height:1.7;padding-right:6px;font-family:Georgia,serif;}
+.bible-content p{margin:0 0 14px}
+.bible-content sup{color:var(--accent);font-weight:700;margin-right:6px;font-size:13px;font-family:system-ui,sans-serif;}
+
+.doc-preview-modal .modal-box{max-width:1000px;width:100%;max-height:95vh;height:auto;display:flex;flex-direction:column;padding:16px;}
+@media(max-width:600px){.doc-preview-modal{padding:0;}.doc-preview-modal .modal-box{border-radius:18px 18px 0 0;height:100dvh;max-height:100dvh;margin-top:auto;}}
+
+.auth-wrap{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:20px;
+  background:radial-gradient(circle at 50% 0%,#ffffff 0%,#fdf8f8 60%);}
+.auth-card{width:100%;max-width:420px;background:var(--panel);border:1px solid var(--line);
+  border-radius:18px;padding:24px 22px 26px;box-shadow:0 20px 50px rgba(220,38,38,.06);}
+.auth-logo{font-size:38px;text-align:center;margin-bottom:6px}
+.auth-card h1{text-align:center;margin-bottom:2px;font-size:21px}
+.auth-card .sub{text-align:center;color:var(--muted);font-size:13px;margin-bottom:18px}
+
+.tabs{display:flex;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:3px;margin-bottom:18px;gap:3px;flex-wrap:wrap}
+.tabs button{flex:1;background:none;border:0;color:var(--muted);font:inherit;font-size:12.5px;padding:8px 4px;border-radius:8px;cursor:pointer;white-space:nowrap;}
+.tabs button.on{background:var(--accent);color:#ffffff;font-weight:600}
+
+label{display:block;font-size:13px;color:var(--muted);margin-bottom:12px}
+input,textarea,select{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--text);
+  padding:11px 12px;border-radius:9px;font:inherit;font-size:15px;margin-top:5px;}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(220,38,38,.15)}
+textarea{resize:vertical;min-height:70px;font-family:inherit}
+select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+
+.btn{background:var(--panel2);color:var(--text);border:1px solid var(--line);
+  padding:11px 16px;border-radius:9px;cursor:pointer;font:inherit;font-size:14px;font-weight:500;transition:.15s;}
+.btn:hover{border-color:#fca5a5}
+.btn:active{transform:scale(.98)}
+.btn.primary{background:var(--accent);color:#ffffff;border-color:transparent;font-weight:600}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--danger);border-color:#fca5a5;background:#fef2f2}
+.btn.ok{color:var(--ok);border-color:#bbf7d0;background:#f0fdf4;font-weight:600}
+.btn.block{width:100%;display:block}
+.btn.sm{padding:7px 12px;font-size:13px}
+.btn.xs{padding:5px 9px;font-size:12px;border-radius:7px}
+
+.alert{padding:10px 13px;border-radius:9px;font-size:13.5px;margin-bottom:14px;border:1px solid}
+.alert.err{background:#fef2f2;border-color:#fecaca;color:#b91c1c}
+.alert.ok{background:#f0fdf4;border-color:#bbf7d0;color:#15803d}
+.alert.info{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8}
+
+.hint{margin-top:18px;padding:11px 13px;border-radius:9px;background:var(--panel2);
+  border:1px dashed var(--line);font-size:12.5px;color:var(--muted);text-align:center;}
+.hint b{color:var(--accent)}
+
+
+/* ── LANGUAGE SELECTOR ── */
+.lang-select{
+  flex:0 0 auto;
+  width:auto;
+  min-width:105px;
+  margin:0;
+  padding:7px 28px 7px 9px;
+  border:1px solid rgba(0,0,0,.18);
+  border-radius:8px;
+  background:rgba(255,255,255,.95);
+  color:#222;
+  font-size:12px;
+  font-weight:600;
+}
+
+/* ── HEADER ── */
+.app-header{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:10px;
+  padding:12px 16px;padding-top:calc(12px + env(safe-area-inset-top));
+  background:transparent;border-bottom:none;}
+.app-header .title{flex:1;min-width:0;cursor:pointer;}
+.app-header .title b{display:block;font-size:17px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.2px;color:#000000;}
+.app-header .title span{font-size:11.5px;color:rgba(0,0,0,.7)}
+.app-header .title:active{opacity:.85}
+
+.avatar{flex:0 0 38px;height:38px;border-radius:50%;background:#ffffff;
+  border:2px solid #ffffff;display:grid;place-items:center;color:var(--green);
+  font-weight:700;font-size:18px;cursor:pointer;overflow:hidden;padding:0;transition:transform .12s;
+  box-shadow:0 2px 6px rgba(0,0,0,.15);}
+.avatar:hover{transform:scale(1.05)}
+.avatar:active{transform:scale(.95)}
+.avatar img{width:100%;height:100%;object-fit:cover;display:block;border-radius:50%}
+
+main{max-width:820px;margin:0 auto;padding:16px 16px calc(100px + env(safe-area-inset-bottom));position:relative;z-index:1;}
+.badge{display:inline-block;min-width:18px;height:18px;line-height:18px;padding:0 5px;
+  border-radius:9px;background:var(--accent);color:#fff;font-size:11px;font-weight:700;text-align:center;vertical-align:middle;}
+
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;
+  background:rgba(253,248,248,.96);backdrop-filter:blur(12px);border-top:1px solid var(--line);
+  padding-bottom:env(safe-area-inset-bottom);}
+.nav button{flex:1;background:none;border:0;color:var(--muted);font:inherit;font-size:10.5px;
+  padding:9px 2px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;position:relative;}
+.nav button .ic{font-size:19px;line-height:1}
+.nav button.on{color:var(--accent)}
+.nav button .badge{position:absolute;top:5px;right:calc(50% - 20px)}
+
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:16px;margin-bottom:14px;box-shadow:0 2px 8px rgba(220,38,38,.03);}
+.row-between{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:16px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;box-shadow:0 2px 8px rgba(220,38,38,.03);}
+.stat b{display:block;font-size:23px;color:var(--accent);line-height:1.15}
+.stat span{font-size:11.5px;color:var(--muted)}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+@media(max-width:560px){.grid2{grid-template-columns:1fr}}
+
+.list-item{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid #f5e0e0;}
+.list-item:last-child{border-bottom:0}
+.list-item:first-child{padding-top:0}
+.li-body{flex:1;min-width:0}
+.li-body b{display:block;font-weight:500;word-break:break-word}
+.li-body span{font-size:12.5px;color:var(--muted);word-break:break-word}
+.li-icon{flex:0 0 38px;height:38px;border-radius:10px;display:grid;place-items:center;background:var(--panel2);border:1px solid var(--line);font-size:18px;}
+
+.avatar-sm{flex:0 0 34px;height:34px;border-radius:50%;background:var(--panel2);
+  border:1px solid var(--line);display:grid;place-items:center;color:var(--accent);
+  font-weight:700;font-size:12px;overflow:hidden;padding:0;}
+.avatar-sm img{width:100%;height:100%;object-fit:cover;display:block;border-radius:50%}
+
+.empty{color:var(--muted);text-align:center;padding:34px 10px;font-size:14px}
+.pill{display:inline-block;font-size:11.5px;padding:2px 9px;border-radius:999px;
+  background:var(--panel2);border:1px solid var(--line);color:var(--muted);}
+.pill.ok{color:var(--ok);border-color:#bbf7d0}
+.pill.warn{color:#d97706;border-color:#fde68a}
+.pill.bad{color:var(--danger);border-color:#fecaca}
+.pill.red{color:var(--accent);border-color:#fca5a5}
+
+.doc-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f5e0e0;}
+.doc-item:last-child{border-bottom:0}
+.doc-item:first-child{padding-top:0}
+.doc-icon{flex:0 0 32px;height:32px;border-radius:8px;display:grid;place-items:center;background:var(--panel2);border:1px solid var(--line);font-size:16px;}
+.doc-info{flex:1;min-width:0}
+.doc-name{font-size:13.5px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;line-height:1.3;}
+.doc-meta{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;margin-top:1px;line-height:1.3;}
+.doc-actions{display:flex;gap:4px;flex:0 0 auto;align-items:center;}
+.doc-actions .btn.xs{padding:5px 7px;font-size:13px;line-height:1;min-width:30px;}
+
+.folder{border:1px solid var(--line);border-radius:12px;margin-bottom:12px;overflow:hidden;background:#fffafa;}
+.folder-header{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--panel2);border-bottom:1px solid var(--line);cursor:pointer;}
+.folder-header .folder-icon{font-size:20px}
+.folder-header .folder-name{flex:1;font-weight:600;font-size:14.5px;color:var(--text)}
+.folder-header .folder-count{font-size:11.5px;color:var(--accent);background:#fff;padding:2px 9px;border-radius:999px;border:1px solid var(--line);font-weight:600;}
+.folder-body{padding:6px 14px}
+.folder-body .list-item{padding:10px 0}
+.folder-body .empty{padding:18px 10px;font-size:13px}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.chip{display:flex;align-items:center;gap:7px;padding:7px 13px 7px 10px;border:1px solid var(--line);border-radius:999px;cursor:pointer;background:var(--panel2);font-size:13.5px;user-select:none;}
+.chip input{width:auto;margin:0;accent-color:var(--accent)}
+.chip.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.on input{accent-color:#fff}
+
+.file-input{width:100%;padding:16px;border:2px dashed var(--line);border-radius:10px;
+  background:var(--panel2);text-align:center;color:var(--muted);cursor:pointer;font-size:13.5px;margin-bottom:12px;}
+.file-input:hover{border-color:var(--accent);color:var(--text)}
+input[type=file]{display:none}
+
+.notif{display:flex;gap:11px;padding:12px 0;border-bottom:1px solid #f5e0e0;align-items:flex-start;transition:background .12s;}
+.notif:last-child{border-bottom:0}
+.notif .dot{flex:0 0 8px;height:8px;border-radius:50%;background:var(--accent);margin-top:7px;}
+.notif.seen .dot{background:var(--line)}
+.notif .body{flex:1;min-width:0}
+.notif .body p{margin:0;font-size:14px;word-break:break-word;line-height:1.4}
+.notif .body small{color:var(--muted);font-size:11.5px;display:block;margin-top:2px}
+.notif-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+.notif-action-btn{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;border:1px solid transparent;line-height:1;}
+.notif-action-btn.accept{background:#16a34a;color:#fff;}
+.notif-action-btn.accept:hover{filter:brightness(1.08)}
+.notif-action-btn.reject{background:#fef2f2;color:#b91c1c;border-color:#fca5a5;}
+.notif-action-btn.reject:hover{background:#fee2e2}
+
+.notif.selectable{cursor:pointer}
+.notif.selectable:hover{background:#fff5f5}
+.notif.selected{background:#fef2f2}
+.notif-check{width:18px;height:18px;flex:0 0 18px;margin:6px 0 0 0;padding:0;accent-color:var(--accent);cursor:pointer;}
+.select-all-label{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;color:var(--text);cursor:pointer;user-select:none;margin:0;}
+.select-all-label input{width:auto;margin:0;accent-color:var(--accent);padding:0;}
+
+.note-card{background:#fffafa;border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:12px 14px;margin-bottom:10px;}
+.note-card .note-text{white-space:pre-wrap;word-break:break-word;font-size:14.5px;line-height:1.55}
+.note-card .note-meta{display:flex;justify-content:space-between;align-items:center;margin-top:8px;gap:8px}
+
+.profile-photo-wrap{display:flex;flex-direction:column;align-items:center;margin:8px 0 18px;}
+.profile-photo{width:96px;height:96px;border-radius:50%;overflow:hidden;background:var(--panel2);border:2px solid var(--line);display:grid;place-items:center;font-size:30px;font-weight:700;color:var(--accent);}
+.profile-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-upload-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;background:var(--accent);color:#fff;cursor:pointer;border:none;margin-top:10px;}
+.photo-upload-btn:hover{filter:brightness(1.08)}
+
+.folder.admins-folder{border-color:#fcd34d;background:#fffbeb;}
+.folder.admins-folder .folder-header{background:#fef3c7;border-bottom-color:#fde68a;}
+.folder.admins-folder .folder-name{color:#92400e;}
+
+.folder.activity-folder{margin:8px 0 10px;background:#ffffff;border-color:#e5e7eb;}
+.folder.activity-folder .folder-header{background:#fafafa;border-bottom-color:#e5e7eb;padding:10px 12px;}
+.folder.activity-folder .folder-name{font-size:13.5px;color:#374151;}
+.folder.activity-folder .folder-count{font-size:11px;padding:1px 8px;}
+
+.q-admin-box{
+  border:2px solid var(--accent);border-radius:10px;padding:10px 12px;margin:10px 0;
+  background:#fff7f7;display:flex;align-items:flex-start;gap:8px;
+}
+.q-admin-box .q-badge{
+  flex:0 0 auto;min-width:38px;padding:4px 8px;border-radius:6px;
+  background:var(--accent);color:#fff;font-size:11.5px;font-weight:700;
+  text-align:center;line-height:1.2;margin-top:2px;
+}
+.q-admin-box .q-input{
+  flex:1;margin:0;padding:9px 11px;font-size:14px;
+  background:#ffffff;border:1px solid var(--line);
+}
+.q-admin-box .q-del{flex:0 0 auto;margin-top:2px;}
+
+.q-card{border:1px solid #e5e7eb;border-radius:12px;margin:12px 0;background:#ffffff;overflow:hidden;}
+.q-card-question{
+  border-left:4px solid var(--accent);padding:12px 14px;background:#fff7f7;
+  display:flex;align-items:flex-start;gap:10px;
+}
+.q-card-question .q-badge{
+  flex:0 0 auto;min-width:38px;padding:5px 9px;border-radius:7px;
+  background:var(--accent);color:#fff;font-size:12px;font-weight:700;
+  text-align:center;line-height:1.2;
+}
+.q-card-question .q-text{
+  flex:1;font-size:14.5px;font-weight:600;color:var(--text);
+  line-height:1.45;word-break:break-word;padding-top:3px;
+}
+.q-card-question .q-text.muted{color:var(--muted);font-style:italic;font-weight:400;}
+
+.q-answer-rect{
+  margin:0 12px 12px;
+  border:2px dashed #cbd5e1;border-radius:10px;padding:12px 14px;
+  background:#f8fafc;cursor:pointer;
+  transition:border-color .15s, background .15s, transform .1s;user-select:none;
+}
+.q-answer-rect:hover{border-color:var(--accent);background:#fff5f5}
+.q-answer-rect:active{transform:scale(.99)}
+.q-answer-rect.has-answer{border-style:solid;border-color:#bbf7d0;background:#f0fdf4;}
+.q-answer-rect.open{border-style:solid;border-color:var(--accent);background:#fffefe;cursor:default;}
+.q-answer-rect.open:hover{background:#fffefe}
+.q-answer-hint{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  font-size:13px;color:var(--muted);font-weight:500;
+}
+.q-answer-hint .icon{font-size:18px;}
+.q-answer-hint .label{flex:1;min-width:0;}
+.q-answer-rect.has-answer .q-answer-hint .label{color:#166534;font-weight:600;}
+.q-answer-rect.has-answer .q-answer-hint .icon{color:var(--ok);}
+.q-answer-hint .count-badge{
+  font-size:11px;padding:2px 8px;border-radius:999px;
+  background:#e2e8f0;color:#475569;font-weight:700;
+}
+.q-answer-rect.has-answer .q-answer-hint .count-badge{background:#dcfce7;color:#166534;}
+.q-answer-preview{
+  margin-top:6px;font-size:13.5px;color:#166534;line-height:1.5;font-style:italic;
+  overflow:hidden;text-overflow:ellipsis;display:-webkit-box;
+  -webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word;
+}
+.q-answer-open-area{margin-top:12px;padding-top:12px;border-top:1px dashed #cbd5e1;}
+.q-answer-open-area textarea{
+  background:#ffffff;min-height:100px;font-size:14.5px;
+  border:2px solid var(--accent);border-radius:9px;
+}
+.q-answer-open-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center;}
+.q-answers-list{margin:0 12px 12px;padding-top:10px;border-top:1px dashed #e5e7eb;}
+.q-answers-list .q-list-label{font-size:12px;color:#718096;font-weight:700;margin-bottom:6px;}
+.q-answers-list .q-answer-item{display:flex;gap:8px;align-items:flex-start;padding:8px 0;border-bottom:1px dashed #f0f0f0;}
+.q-answers-list .q-answer-item:last-child{border-bottom:0;}
+.q-answers-list .q-answer-item .body{flex:1;min-width:0;}
+.q-answers-list .q-answer-item .name{font-size:12px;font-weight:700;color:#2d3748;display:block;margin-bottom:2px;}
+.q-answers-list .q-answer-item .text{font-size:13.5px;line-height:1.5;white-space:pre-wrap;word-break:break-word;}
+.q-answers-list .q-answer-item .date{font-size:10.5px;color:#6b7280;margin-top:2px;display:block;}
+
+.finished-card{border:1px solid #bbf7d0;border-radius:12px;overflow:hidden;margin-bottom:14px;background:#f0fdf4;}
+.finished-card-header{display:flex;align-items:center;gap:10px;padding:12px 14px;background:#dcfce7;border-bottom:1px solid #bbf7d0;}
+.finished-card-header .icon{font-size:22px}
+.finished-card-header .title-wrap{flex:1;min-width:0}
+.finished-card-header .title{font-size:14.5px;font-weight:700;color:#166534;display:block;line-height:1.25;}
+.finished-card-header .subtitle{font-size:11.5px;color:#4d7c5f;display:block;margin-top:1px;}
+.finished-card-body{padding:8px 14px 14px;}
+.finished-q{border:2px solid #d1fae5;background:#ffffff;border-radius:10px;padding:12px 14px;margin:10px 0;}
+.finished-q .fq-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;}
+.finished-q .fq-num{
+  flex:0 0 auto;min-width:38px;padding:5px 9px;border-radius:7px;
+  background:#16a34a;color:#fff;font-size:12px;font-weight:700;text-align:center;line-height:1.2;
+}
+.finished-q .fq-text{flex:1;font-size:14.5px;font-weight:600;color:#14532d;line-height:1.4;word-break:break-word;padding-top:2px;}
+.finished-q .fq-answers{border-top:1px dashed #d1fae5;padding-top:10px;margin-top:4px;}
+.finished-q .fq-answer{display:flex;gap:9px;align-items:flex-start;padding:9px 0;border-bottom:1px dashed #f0f0f0;}
+.finished-q .fq-answer:last-child{border-bottom:0;}
+.finished-q .fq-answer-body{flex:1;min-width:0;}
+.finished-q .fq-answer-name{font-size:12.5px;font-weight:700;color:#065f46;display:block;margin-bottom:3px;}
+.finished-q .fq-answer-text{font-size:14px;line-height:1.5;color:#1f2937;white-space:pre-wrap;word-break:break-word;}
+.finished-q .fq-answer-date{font-size:10.5px;color:#6b7280;margin-top:3px;display:block;}
+.finished-q .fq-no-answer{font-size:12.5px;color:#9ca3af;font-style:italic;padding:4px 0;}
+
+.member-remove-btn{flex:0 0 auto;padding:5px 10px;border-radius:7px;font-size:12px;font-weight:600;background:#fef2f2;color:var(--danger);border:1px solid #fca5a5;cursor:pointer;}
+.member-remove-btn:hover{background:#fee2e2;}
+.activity-meta{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:2px;}
+.activity-meta .creator-tag{color:#6b7280;}
+
+.group-name-chip{
+  display:inline-block;background:#166534;color:#fff;font-size:11px;font-weight:700;
+  padding:2px 8px;border-radius:999px;letter-spacing:.3px;text-transform:uppercase;
+}
+
+.home-section-title{
+  font-size:15px;font-weight:700;color:var(--text);
+  display:flex;align-items:center;gap:8px;margin-bottom:10px;
+}
+
+    body[dir="rtl"] .bible-modal-content, body[dir="rtl"] .bible-modal-content p { text-align: right; }
+    #rd-book { min-width: 0; }
+
+/* ===== MULTI-DEVICE RESPONSIVE SUPPORT ===== */
+
+/* Prevent horizontal scrolling on every screen size */
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Flexible app/header areas */
+.app-header,
+main,
+.card,
+.section,
+.list,
+.row,
+.form-row {
+  max-width: 100%;
+}
+
+/* Phones: small screens */
+@media (max-width: 480px) {
+  body {
+    font-size: 14px;
+  }
+
+  .top-green-bar {
+    height: 115px;
+  }
+
+  .app-header {
+    padding: 10px 10px;
+    gap: 6px;
+  }
+
+  .app-header .title b {
+    font-size: 15px;
+  }
+
+  .app-header .title span {
+    font-size: 10px;
+  }
+
+  main {
+    width: 100%;
+    padding: 12px 10px calc(90px + env(safe-area-inset-bottom));
+  }
+
+  .auth-card {
+    width: calc(100vw - 24px);
+    max-width: none;
+  }
+
+  .btn {
+    min-height: 42px;
+  }
+
+  input, textarea, select {
+    min-height: 42px;
+    font-size: 16px; /* prevents iPhone/Android browser zoom on focus */
+  }
+
+  .modal-overlay {
+    padding: 8px;
+  }
+
+  .modal-box {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .bible-modal .modal-box,
+  .doc-preview-modal .modal-box {
+    width: 100%;
+  }
+
+  /* Make long Bible text comfortable to read */
+  .bible-text,
+  .reader-content,
+  .chapter-content {
+    width: 100%;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: normal;
+  }
+
+  /* Buttons can wrap instead of overflowing */
+  .actions,
+  .toolbar,
+  .button-row {
+    flex-wrap: wrap;
+  }
+
+  .actions .btn,
+  .toolbar .btn {
+    max-width: 100%;
+  }
+
+  img, video, object, iframe {
+    max-width: 100%;
+  }
+}
+
+/* Small phones */
+@media (max-width: 360px) {
+  main {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .app-header {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  h1 { font-size: 20px; }
+  h2 { font-size: 18px; }
+
+  .grid2 {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Tablets: portrait and landscape */
+@media (min-width: 481px) and (max-width: 1024px) {
+  main {
+    width: 100%;
+    max-width: 900px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .auth-card {
+    max-width: 520px;
+  }
+
+  .bible-modal .modal-box {
+    width: min(92vw, 760px);
+  }
+
+  .doc-preview-modal .modal-box {
+    width: min(94vw, 1000px);
+  }
+}
+
+/* Desktop / laptop */
+@media (min-width: 1025px) {
+  main {
+    width: min(100% - 40px, 900px);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .app-header {
+    padding-left: max(16px, calc((100vw - 900px) / 2));
+    padding-right: max(16px, calc((100vw - 900px) / 2));
+  }
+}
+
+/* Very wide monitors */
+@media (min-width: 1440px) {
+  body {
+    font-size: 16px;
+  }
+
+  main {
+    max-width: 980px;
+  }
+}
+
+/* Landscape phones */
+@media (max-height: 500px) and (orientation: landscape) {
+  .top-green-bar {
+    height: 90px;
+  }
+
+  main {
+    padding-bottom: 30px;
+  }
+
+  .bible-modal .modal-box,
+  .doc-preview-modal .modal-box {
+    max-height: 96vh;
+    height: 96vh;
+  }
+}
+
+/* Safe areas for phones with notches/navigation bars */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  .app-header {
+    padding-top: max(10px, env(safe-area-inset-top));
+  }
+}
+
+/* Better touch experience */
+button,
+.btn,
+select,
+input[type="radio"],
+input[type="checkbox"],
+a {
+  touch-action: manipulation;
+}
+
+/* Prevent fixed-width children from breaking the page */
+* {
+  min-width: 0;
+}
+
+table {
+  width: 100%;
+  max-width: 100%;
+  display: block;
+  overflow-x: auto;
+}
+
+pre, code {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+</style>
+</head>
+<body>
+<div class="top-green-bar"></div>
+<div id="root"></div>
+<div id="modal-root"></div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════
+   BIBLE STUDY GROUP — English only
+   ══════════════════════════════════════════════════════════════ */
+
+
+/* ══════════════════════════════════════════════════════════════
+   MULTI-LANGUAGE UI — English / Afaan Oromoo / Amharic
+   The existing app remains unchanged; this layer translates UI text.
+   ══════════════════════════════════════════════════════════════ */
+const LANG_KEY = 'bsg-language-v1';
+let currentLang = localStorage.getItem(LANG_KEY) || 'en';
+
+const LANG = {
+  en: {
+    'Bible Study Group':'Bible Study Group',
+    'Read · Share · Grow together':'Read · Share · Grow together',
+    'Log in':'Log in','Sign up':'Sign up','Change password':'Change password',
+    'Full name':'Full name','Password':'Password','Old password':'Old password',
+    'New password':'New password','Confirm password':'Confirm password',
+    'Confirm new password':'Confirm new password','Submit request':'Submit request',
+    'Change password':'Change password','Home':'Home','Reading':'Reading','Docs':'Docs',
+    'Alerts':'Alerts','Admin':'Admin','Members':'Members','Groups':'Groups',
+    'Total readings':'Total readings','Your readings':'Your readings',
+    'Finished Activities':'Finished Activities','Recent reading activity':'Recent reading activity',
+    'Log reading':'Log reading','Groups, Admins & Members':'Groups, Admins & Members',
+    'Quick actions':'Quick actions','📖 Log a reading':'📖 Log a reading',
+    'Documents':'Documents','Manage':'Manage','No groups created yet.':'No groups created yet.',
+    'Bible Reading':'Bible Reading','Log what you read':'Log what you read',
+    'Book':'Book','Chapter(s)':'Chapter(s)','Read':'Read','Note (optional)':'Note (optional)',
+    'Save Note':'Save Note','My Saved Notes':'My Saved Notes','Group reading log':'Group reading log',
+    'Documents':'Documents','All documents':'All documents','Upload a document':'Upload a document',
+    'Upload':'Upload','Notifications':'Notifications','Clear all notifications':'Clear all notifications',
+    'Select all':'Select all','Delete selected':'Delete selected','No notifications yet.':'No notifications yet.',
+    'Admin panel':'Admin panel','Pending requests':'Pending requests','Admin Profile':'Admin Profile',
+    'Edit':'Edit','Change Photo & Name':'Change Photo & Name','Groups & Activities':'Groups & Activities',
+    'Create Group':'Create Group','Sign-up requests':'Sign-up requests','waiting':'waiting',
+    'Approve':'Approve','Reject':'Reject','Remove':'Remove','Cancel':'Cancel','Save':'Save',
+    'Close':'Close','Confirm':'Confirm','Delete':'Delete','Download':'Download','Preview':'Preview',
+    'Open':'Open','Sent':'Sent','Draft':'Draft','Answer':'Answer','Answers':'Answers',
+    'No pending requests.':'No pending requests.','No groups yet. Tap "+ Create Group".':'No groups yet. Tap "+ Create Group".',
+    'New here? Send a request to the admin.':'New here? Send a request to the admin.',
+    'Change your password using your current one.':'Change your password using your current one.',
+    'Every member can view, open, download, and edit these files.':'Every member can view, open, download, and edit these files.',
+    'Every member can view, open, download, and edit these files.':'Every member can view, open, download, and edit these files.',
+    'All documents':'All documents','No documents uploaded yet.':'No documents uploaded yet.',
+    'Tap to choose a file':'Tap to choose a file','Preview not available.':'Preview not available.',
+    'No readings logged yet. Be the first!':'No readings logged yet. Be the first!',
+    'You have no saved notes yet.':'You have no saved notes yet.',
+    'Tap the photo to change it':'Tap the photo to change it',
+    'My Profile':'My Profile','Role':'Role','Administrator':'Administrator','Member':'Member',
+    'Log out':'Log out','Upload Photo':'Upload Photo','Change Photo':'Change Photo',
+    'Remove':'Remove','Max 2 MB · Auto-resized to 200×200':'Max 2 MB · Auto-resized to 200×200',
+    'Members':'Members','reading':'reading','readings':'readings','joined':'joined',
+    'Requested':'Requested','Handled':'Handled','notification':'notification','notifications':'notifications',
+    'No questions yet. Tap "+ Add Question" below.':'No questions yet. Tap "+ Add Question" below.',
+    'Add Question':'+ Add Question','Send & Publish':'Send & Publish',
+    'Question':'Question','Your answer':'Your answer','Save answer':'Save answer',
+    'Delete Answer':'Delete Answer','Remove your answer?':'Remove your answer?',
+    'Please write an answer before saving.':'Please write an answer before saving.',
+    'Approve Request':'Approve Request','Reject Request':'Reject Request','Remove Member':'Remove Member',
+    'Change Photo & Name':'Change Photo & Name','New password must be different.':'New password must be different.',
+    'Please fill in all fields.':'Please fill in all fields.',
+    'Name or password is incorrect.':'Name or password is incorrect.',
+    'Your account is not approved yet.':'Your account is not approved yet.',
+    'Your request is still waiting for admin approval.':'Your request is still waiting for admin approval.',
+    'Request sent! The admin will review it shortly.':'Request sent! The admin will review it shortly.',
+    'Password must be at least 4 characters.':'Password must be at least 4 characters.',
+    'New password must be at least 4 characters.':'New password must be at least 4 characters.',
+    'Passwords do not match.':'Passwords do not match.',
+    'New passwords do not match.':'New passwords do not match.',
+    'This full name is already registered.':'This full name is already registered.',
+    'A sign-up request with this full name is already pending.':'A sign-up request with this full name is already pending.',
+    'Password changed successfully. You can log in now.':'Password changed successfully. You can log in now.',
+    'Please choose an image file.':'Please choose an image file.',
+    'Image is larger than 2 MB.':'Image is larger than 2 MB.',
+    'Could not read that image.':'Could not read that image.',
+    'Storage is full.':'Storage is full.',
+    'Please enter your name.':'Please enter your name.',
+    'Three admins:':'Three admins:','Auto-fill Admin':'Auto-fill Admin',
+    'just now':'just now','ago':'ago','Loading…':'Loading…',
+    'Please enter a chapter number to read.':'Please enter a chapter number to read.','Please enter a valid chapter number.':'Please enter a valid chapter number.'
+  },
+  om: {
+    'Bible Study Group':'Garee Qo’annoo Macaafa Qulqulluu',
+    'Read · Share · Grow together':'Dubbisaa · Qoodaa · Waliin guddadhaa',
+    'Log in':'Seeni','Sign up':'Galmaa’i','Change password':'Jecha iccitii jijjiiri',
+    'Full name':'Maqaa guutuu','Password':'Jecha iccitii','Old password':'Jecha iccitii durii',
+    'New password':'Jecha iccitii haaraa','Confirm password':'Jecha iccitii mirkaneessi',
+    'Confirm new password':'Jecha iccitii haaraa mirkaneessi','Submit request':'Gaaffii ergi',
+    'Home':'Mana','Reading':'Dubbisa','Docs':'Galmee','Alerts':'Beeksisa','Admin':'Bulchaa',
+    'Members':'Miseensota','Groups':'Gareewwan','Total readings':'Dubbisa waliigalaa',
+    'Your readings':'Dubbisa kee','Finished Activities':'Hojiiwwan xumuraman',
+    'Recent reading activity':'Sochii dubbisaa dhihoo','Log reading':'Dubbisa galmeessi',
+    'Groups, Admins & Members':'Gareewwan, Bulchitootaa fi Miseensota',
+    'Quick actions':'Gochaalee saffisaa','📖 Log a reading':'📖 Dubbisa galmeessi',
+    'Documents':'Galmeewwan','Manage':'Bulchi','No groups created yet.':'Gareen ammaaf hin uumamne.',
+    'Bible Reading':'Dubbisa Macaafa Qulqulluu','Log what you read':'Waan dubbiste galmeessi',
+    'Book':'Kitaaba','Chapter(s)':'Boqonnaa','Read':'Dubbisi','Note (optional)':'Yaada (filannoo)',
+    'Save Note':'Yaada olkaa’i','My Saved Notes':'Yaadota koo olkaa’aman','Group reading log':'Galmee dubbisa garee',
+    'Upload a document':'Galmee olkaa’i','Upload':'Olkaa’i','Notifications':'Beeksisawwan',
+    'Clear all notifications':'Beeksisawwan hunda qulqulleessi','Select all':'Hunda filadhu',
+    'Delete selected':'Filataman haqii','No notifications yet.':'Beeksisni ammaaf hin jiru.',
+    'Admin panel':'Fuula bulchaa','Pending requests':'Gaaffiiwwan eeggatan',
+    'Admin Profile':'Profaayila bulchaa','Edit':'Sirreessi','Change Photo & Name':'Suuraa fi maqaa jijjiiri',
+    'Groups & Activities':'Gareewwanii fi hojiiwwan','Create Group':'+ Garee uumi',
+    'Sign-up requests':'Gaaffii galmee','waiting':'eeggachaa jira','Approve':'Mirkaneessi',
+    'Reject':'Kufaa godhi','Remove':'Haqi','Cancel':'Haqi/Irra deebi’i','Save':'Olkaa’i',
+    'Close':'Cufi','Confirm':'Mirkaneessi','Delete':'Haqi','Download':'Buusi','Preview':'Duraa ilaali',
+    'Open':'Bani','Sent':'Ergame','Draft':'Qaboo','Answer':'Deebii','Answers':'Deebiiwwan',
+    'No pending requests.':'Gaaffiin eeggataa jiru hin jiru.',
+    'No groups yet. Tap "+ Create Group".':'Gareen hin jiru. “+ Garee uumi” cuqaasi.',
+    'New here? Send a request to the admin.':'Haaraa dha? Gaaffii bulchaaf ergi.',
+    'Change your password using your current one.':'Jecha iccitii amma qabdu fayyadamuun jijjiiri.',
+    'Every member can view, open, download, and edit these files.':'Miseensi hundi faayilota kana ilaaluu, banuu, buusuu fi gulaaluu ni danda’a.',
+    'All documents':'Galmeewwan hunda','No documents uploaded yet.':'Galmeen ammaaf hin olkaa’amne.',
+    'Tap to choose a file':'Faayila filachuuf cuqaasi','Preview not available.':'Dura ilaalchi hin jiru.',
+    'No readings logged yet. Be the first!':'Dubbisni ammaaf hin galmoofne. Ati isa jalqabaa ta’i!',
+    'You have no saved notes yet.':'Yaadni olkaa’ame siif hin jiru.',
+    'Tap the photo to change it':'Suuraa jijjiiruuf cuqaasi','My Profile':'Profaayila koo',
+    'Role':'Gahee','Administrator':'Bulchaa','Member':'Miseensa','Log out':'Ba’i',
+    'Upload Photo':'Suuraa olkaa’i','Change Photo':'Suuraa jijjiiri',
+    'Max 2 MB · Auto-resized to 200×200':'Hanga 2 MB · Ofumaan 200×200tti sirreeffama',
+    'reading':'dubbisa','readings':'dubbisawwan','joined':'makame',
+    'Requested':'Gaafatame','Handled':'Qindaa’e','notification':'beeksisa','notifications':'beeksisawwan',
+    'No questions yet. Tap "+ Add Question" below.':'Gaaffiin ammaaf hin jiru. “+ Gaaffii dabali” cuqaasi.',
+    'Add Question':'+ Gaaffii dabali','Send & Publish':'Ergi fi maxxansi',
+    'Question':'Gaaffii','Your answer':'Deebii kee','Save answer':'Deebii olkaa’i',
+    'Delete Answer':'Deebii haqii','Remove your answer?':'Deebii kee haquu?',
+    'Please write an answer before saving.':'Maaloo deebii barreessiitii olkaa’i.',
+    'Approve Request':'Gaaffii mirkaneessi','Reject Request':'Gaaffii kufaa godhi',
+    'Remove Member':'Miseensa haqi','New password must be different.':'Jecha iccitii haaraan kan duraa irraa adda ta’uu qaba.',
+    'Please fill in all fields.':'Maaloo bakka hundaa guuti.',
+    'Name or password is incorrect.':'Maqaan ykn jechi iccitii sirrii miti.',
+    'Your account is not approved yet.':'Herregni kee ammaaf hin mirkanoofne.',
+    'Your request is still waiting for admin approval.':'Gaaffiin kee amma illee eeyyama bulchaa eeggachaa jira.',
+    'Request sent! The admin will review it shortly.':'Gaaffiin ergameera! Bulchaan yeroo gabaabaa keessatti ilaala.',
+    'Password must be at least 4 characters.':'Jecha iccitii yoo xiqqaate qubee 4 qabaachuu qaba.',
+    'New password must be at least 4 characters.':'Jechi iccitii haaraan yoo xiqqaate qubee 4 qabaachuu qaba.',
+    'Passwords do not match.':'Jechoonni iccitii wal hin siman.',
+    'New passwords do not match.':'Jechoonni iccitii haaraa wal hin siman.',
+    'This full name is already registered.':'Maqaan guutuun kun duraan galmaa’eera.',
+    'A sign-up request with this full name is already pending.':'Gaaffiin galmee maqaa guutuu kanaan duraan eeggachaa jira.',
+    'Password changed successfully. You can log in now.':'Jechi iccitii milkaa’inaan jijjiirameera. Amma seenuu dandeessa.',
+    'Please choose an image file.':'Maaloo faayila suuraa filadhu.',
+    'Image is larger than 2 MB.':'Suuraan 2 MB caala.',
+    'Could not read that image.':'Suuraa sana dubbisuu hin dandeenye.',
+    'Storage is full.':'Kuufamni guutameera.',
+    'Please enter your name.':'Maaloo maqaa kee galchi.',
+    'Three admins:':'Bulchitoota sadii:','Auto-fill Admin':'Bulchaa ofumaan guuti',
+    'just now':'amma','Loading…':'Fe’amaa jira…',
+    'Please enter a chapter number to read.':'Maaloo lakkoofsa boqonnaa dubbistu galchi.','Please enter a valid chapter number.':'Maaloo lakkoofsa boqonnaa sirrii galchi.'
+  },
+  am: {
+    'Bible Study Group':'የመጽሐፍ ቅዱስ ጥናት ቡድን',
+    'Read · Share · Grow together':'አንብብ · አካፍል · አብረን እናድግ',
+    'Log in':'ግባ','Sign up':'ይመዝገቡ','Change password':'የይለፍ ቃል ቀይር',
+    'Full name':'ሙሉ ስም','Password':'የይለፍ ቃል','Old password':'የቆየ የይለፍ ቃል',
+    'New password':'አዲስ የይለፍ ቃል','Confirm password':'የይለፍ ቃል አረጋግጥ',
+    'Confirm new password':'አዲሱን የይለፍ ቃል አረጋግጥ','Submit request':'ጥያቄ ላክ',
+    'Log in':'ግባ','Sign up':'ይመዝገቡ','Change password':'የይለፍ ቃል ቀይር',
+    'Home':'መነሻ','Reading':'ንባብ','Docs':'ሰነዶች','Alerts':'ማሳወቂያዎች','Admin':'አስተዳዳሪ',
+    'Members':'አባላት','Groups':'ቡድኖች','Total readings':'ጠቅላላ ንባቦች',
+    'Your readings':'የእርስዎ ንባቦች','Finished Activities':'የተጠናቀቁ ተግባራት',
+    'Recent reading activity':'የቅርብ ጊዜ የንባብ እንቅስቃሴ','Log reading':'ንባብ መዝግብ',
+    'Groups, Admins & Members':'ቡድኖች፣ አስተዳዳሪዎች እና አባላት',
+    'Quick actions':'ፈጣን እርምጃዎች','📖 Log a reading':'📖 ንባብ መዝግብ',
+    'Documents':'ሰነዶች','Manage':'አስተዳድር','No groups created yet.':'እስካሁን ቡድን አልተፈጠረም።',
+    'Bible Reading':'የመጽሐፍ ቅዱስ ንባብ','Log what you read':'ያነበቡትን ይመዝግቡ',
+    'Book':'መጽሐፍ','Chapter(s)':'ምዕራፍ(ሎች)','Read':'አንብብ','Note (optional)':'ማስታወሻ (አማራጭ)',
+    'Save Note':'ማስታወሻ አስቀምጥ','My Saved Notes':'የተቀመጡ ማስታወሻዎቼ','Group reading log':'የቡድን ንባብ መዝገብ',
+    'Upload a document':'ሰነድ ይጫኑ','Upload':'ጫን','Notifications':'ማሳወቂያዎች',
+    'Clear all notifications':'ሁሉንም ማሳወቂያዎች አጥፋ','Select all':'ሁሉንም ምረጥ',
+    'Delete selected':'የተመረጡትን ሰርዝ','No notifications yet.':'እስካሁን ማሳወቂያ የለም።',
+    'Admin panel':'የአስተዳዳሪ ፓነል','Pending requests':'በመጠባበቅ ላይ ያሉ ጥያቄዎች',
+    'Admin Profile':'የአስተዳዳሪ መገለጫ','Edit':'አርትዕ','Change Photo & Name':'ፎቶ እና ስም ቀይር',
+    'Groups & Activities':'ቡድኖች እና ተግባራት','Create Group':'+ ቡድን ፍጠር',
+    'Sign-up requests':'የምዝገባ ጥያቄዎች','waiting':'በመጠባበቅ ላይ','Approve':'አጽድቅ',
+    'Reject':'ውድቅ አድርግ','Remove':'አስወግድ','Cancel':'ሰርዝ','Save':'አስቀምጥ',
+    'Close':'ዝጋ','Confirm':'አረጋግጥ','Delete':'ሰርዝ','Download':'አውርድ','Preview':'ቅድመ እይታ',
+    'Open':'ክፈት','Sent':'ተልኳል','Draft':'ረቂቅ','Answer':'መልስ','Answers':'መልሶች',
+    'No pending requests.':'በመጠባበቅ ላይ ጥያቄ የለም።',
+    'No groups yet. Tap "+ Create Group".':'እስካሁን ቡድን የለም። “+ ቡድን ፍጠር” ይጫኑ።',
+    'New here? Send a request to the admin.':'አዲስ ነዎት? ለአስተዳዳሪው ጥያቄ ይላኩ።',
+    'Change your password using your current one.':'የአሁኑን የይለፍ ቃል በመጠቀም ይቀይሩ።',
+    'Every member can view, open, download, and edit these files.':'እያንዳንዱ አባል እነዚህን ፋይሎች ማየት፣ መክፈት፣ ማውረድ እና ማርትዕ ይችላል።',
+    'All documents':'ሁሉም ሰነዶች','No documents uploaded yet.':'እስካሁን ሰነድ አልተጫነም።',
+    'Tap to choose a file':'ፋይል ለመምረጥ ይጫኑ','Preview not available.':'ቅድመ እይታ አይገኝም።',
+    'No readings logged yet. Be the first!':'እስካሁን ንባብ አልተመዘገበም። የመጀመሪያው ይሁኑ!',
+    'You have no saved notes yet.':'እስካሁን የተቀመጠ ማስታወሻ የለዎትም።',
+    'Tap the photo to change it':'ፎቶውን ለመቀየር ይጫኑ','My Profile':'የእኔ መገለጫ',
+    'Role':'ሚና','Administrator':'አስተዳዳሪ','Member':'አባል','Log out':'ውጣ',
+    'Upload Photo':'ፎቶ ጫን','Change Photo':'ፎቶ ቀይር',
+    'Max 2 MB · Auto-resized to 200×200':'ከፍተኛ 2 MB · በራስ-ሰር ወደ 200×200 ይስተካከላል',
+    'reading':'ንባብ','readings':'ንባቦች','joined':'ተቀላቅሏል',
+    'Requested':'ተጠይቋል','Handled':'ተከናውኗል','notification':'ማሳወቂያ','notifications':'ማሳወቂያዎች',
+    'No questions yet. Tap "+ Add Question" below.':'እስካሁን ጥያቄ የለም። “+ ጥያቄ ጨምር” ከታች ይጫኑ።',
+    'Add Question':'+ ጥያቄ ጨምር','Send & Publish':'ላክ እና አትም',
+    'Question':'ጥያቄ','Your answer':'መልስዎ','Save answer':'መልስ አስቀምጥ',
+    'Delete Answer':'መልስ ሰርዝ','Remove your answer?':'መልስዎን ማስወገድ ይፈልጋሉ?',
+    'Please write an answer before saving.':'እባክዎ ከማስቀመጥዎ በፊት መልስ ይጻፉ።',
+    'Approve Request':'ጥያቄ አጽድቅ','Reject Request':'ጥያቄ ውድቅ አድርግ',
+    'Remove Member':'አባል አስወግድ','New password must be different.':'አዲሱ የይለፍ ቃል ከአሮጌው መለየት አለበት።',
+    'Please fill in all fields.':'እባክዎ ሁሉንም ቦታዎች ይሙሉ።',
+    'Name or password is incorrect.':'ስም ወይም የይለፍ ቃል ትክክል አይደለም።',
+    'Your account is not approved yet.':'መለያዎ እስካሁን አልጸደቀም።',
+    'Your request is still waiting for admin approval.':'ጥያቄዎ አሁንም የአስተዳዳሪ ፈቃድ እየጠበቀ ነው።',
+    'Request sent! The admin will review it shortly.':'ጥያቄው ተልኳል! አስተዳዳሪው በቅርቡ ይመለከተዋል።',
+    'Password must be at least 4 characters.':'የይለፍ ቃሉ ቢያንስ 4 ቁምፊዎች ሊኖሩት ይገባል።',
+    'New password must be at least 4 characters.':'አዲሱ የይለፍ ቃል ቢያንስ 4 ቁምፊዎች ሊኖሩት ይገባል።',
+    'Passwords do not match.':'የይለፍ ቃሎቹ አይመሳሰሉም።',
+    'New passwords do not match.':'አዲሶቹ የይለፍ ቃሎች አይመሳሰሉም።',
+    'This full name is already registered.':'ይህ ሙሉ ስም አስቀድሞ ተመዝግቧል።',
+    'A sign-up request with this full name is already pending.':'በዚህ ሙሉ ስም የተላከ የምዝገባ ጥያቄ አስቀድሞ በመጠባበቅ ላይ ነው።',
+    'Password changed successfully. You can log in now.':'የይለፍ ቃሉ በተሳካ ሁኔታ ተቀይሯል። አሁን መግባት ይችላሉ።',
+    'Please choose an image file.':'እባክዎ የምስል ፋይል ይምረጡ።',
+    'Image is larger than 2 MB.':'ምስሉ ከ2 MB በላይ ነው።',
+    'Could not read that image.':'ያንን ምስል ማንበብ አልተቻለም።',
+    'Storage is full.':'የማከማቻ ቦታው ሞልቷል።',
+    'Please enter your name.':'እባክዎ ስምዎን ያስገቡ።',
+    'Three admins:':'ሶስት አስተዳዳሪዎች፡','Auto-fill Admin':'አስተዳዳሪን በራስ-ሰር ሙላ',
+    'just now':'አሁን','Loading…':'በመጫን ላይ…',
+    'Please enter a chapter number to read.':'እባክዎ የምዕራፉን ቁጥር ያስገቡ።','Please enter a valid chapter number.':'እባክዎ ትክክለኛ የምዕራፍ ቁጥር ያስገቡ።'
+  }
+};
+
+function tr(s){
+  const x = String(s ?? '');
+  return (LANG[currentLang] && LANG[currentLang][x]) || x;
+}
+
+function setLanguage(lang){
+  if(!LANG[lang]) return;
+  currentLang = lang;
+  localStorage.setItem(LANG_KEY, lang);
+  render();
+}
+
+function translateDOM(){
+  const root = document.getElementById('root');
+  const modal = document.getElementById('modal-root');
+  [root, modal].forEach(container => {
+    if(!container) return;
+    const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    let n;
+    while(n = walker.nextNode()) nodes.push(n);
+    nodes.forEach(node => {
+      const raw = node.nodeValue;
+      const trimmed = raw.trim();
+      if(!trimmed) return;
+      const translated = tr(trimmed);
+      if(translated !== trimmed) node.nodeValue = raw.replace(trimmed, translated);
+    });
+    container.querySelectorAll('input[placeholder],textarea[placeholder]').forEach(el => {
+      const original = el.getAttribute('data-i18n-placeholder') || el.getAttribute('placeholder');
+      if(!el.getAttribute('data-i18n-placeholder')) el.setAttribute('data-i18n-placeholder', original);
+      el.setAttribute('placeholder', tr(original));
+    });
+    container.querySelectorAll('[title]').forEach(el => {
+      const original = el.getAttribute('data-i18n-title') || el.getAttribute('title');
+      if(!el.getAttribute('data-i18n-title')) el.setAttribute('data-i18n-title', original);
+      el.setAttribute('title', tr(original));
+    });
+  });
+  document.documentElement.lang = currentLang === 'om' ? 'om' : currentLang;
+  document.body.dir = currentLang === 'am' ? 'rtl' : 'ltr';
+  const sel = document.getElementById('language-selector');
+  if(sel) sel.value = currentLang;
+}
+
+const langObserver = new MutationObserver(() => {
+  if(!window.__translating) {
+    window.__translating = true;
+    requestAnimationFrame(() => {
+      translateDOM();
+      window.__translating = false;
+    });
+  }
+});
+
+const BIBLE_BOOKS = [
+  'Genesis','Exodus','Leviticus','Numbers','Deuteronomy','Joshua','Judges','Ruth',
+  '1 Samuel','2 Samuel','1 Kings','2 Kings','1 Chronicles','2 Chronicles','Ezra',
+  'Nehemiah','Esther','Job','Psalms','Proverbs','Ecclesiastes','Song of Solomon',
+  'Isaiah','Jeremiah','Lamentations','Ezekiel','Daniel','Hosea','Joel','Amos',
+  'Obadiah','Jonah','Micah','Nahum','Habakkuk','Zephaniah','Haggai','Zechariah',
+  'Malachi','Matthew','Mark','Luke','John','Acts','Romans','1 Corinthians',
+  '2 Corinthians','Galatians','Ephesians','Philippians','Colossians',
+  '1 Thessalonians','2 Thessalonians','1 Timothy','2 Timothy','Titus','Philemon',
+  'Hebrews','James','1 Peter','2 Peter','1 John','2 John','3 John','Jude','Revelation'
+];
+
+// Stable IDs used by the Oromo/Amharic Bible API. Values stay in English
+// internally so saved reading records remain compatible with the app.
+const BIBLE_BOOK_IDS = [
+  'GEN','EXO','LEV','NUM','DEU','JOS','JDG','RUT','1SA','2SA','1KI','2KI','1CH','2CH','EZR',
+  'NEH','EST','JOB','PSA','PRO','ECC','SNG','ISA','JER','LAM','EZK','DAN','HOS','AMO','MIC',
+  'JOL','OBA','JON','NAM','HAB','ZEP','HAG','ZEC','MAL','MAT','MRK','LUK','JHN','ACT','ROM','1CO',
+  '2CO','GAL','EPH','PHP','COL','1TH','2TH','1TI','2TI','TIT','PHM','HEB','JAS','1PE','2PE','1JN','2JN','3JN','JUD','REV'
+];
+const BIBLE_BOOK_INDEX = Object.fromEntries(BIBLE_BOOKS.map((b,i)=>[b,BIBLE_BOOK_IDS[i]]));
+
+const BIBLE_BOOK_NAMES = {
+  en: BIBLE_BOOKS,
+  om: [
+    'Uumama','Seera Baʼuu','Seera Lewwootaa','Lakkoobsa','Keessa Deebii','Iyyaasuu','Abbootii Murtii','Ruut',
+    '1 Saamuʼeel','2 Saamuʼeel','1 Mootota','2 Mootota','1 Seenaa','2 Seenaa','Macaafa Izraa','Nahimiyaa','Asteer',
+    'Iyyoob','Faarfannaa','Fakkeenya','Lallaba','Weedduu Weedduu','Isaayyaas','Ermiyaas','Faaruu','Hisqiʼeel','Daaniʼel',
+    'Hooseʼaa','Yoʼeel','Amoos','Obaadiyaa','Yoonaas','Miikiyaas','Naahoom','Anbaaqoom','Sefaaniyaa','Haagee','Zakkaariyaas',
+    'Miilkiyaas','Maatewos','Maarqos','Luqaas','Yohannis','Hojii Ergamootaa','Roomaa','1 Qorontos','2 Qorontos','Galaatiyaa',
+    'Efesoon','Filiphisiiyus','Qolosaayis','1 Tasalonqee','2 Tasalonqee','1 Ximotewos','2 Ximotewos','Tiitoo','Fiilimoonaa',
+    'Ibroota','Yaaqoob','1 Pheexiros','2 Pheexiros','1 Yohannis','2 Yohannis','3 Yohannis','Yihuudaa','Mulʼata'
+  ],
+  am: [
+    'ኦሪት ዘፍጥረት','ኦሪት ዘጸአት','ኦሪት ዘሌዋውያን','ኦሪት ዘኍልቍ','ኦሪት ዘዳግም','መጽሐፈ ኢያሱ','መጽሐፈ መሳፍንት','መጽሐፈ ሩት',
+    'መጽሐፈ ሳሙኤል ቀዳማዊ','መጽሐፈ ሳሙኤል ካልዕ','መጽሐፈ ነገሥት ቀዳማዊ','መጽሐፈ ነገሥት ካልዕ',
+    'መጽሐፈ ዜና መዋዕል ቀዳማዊ','መጽሐፈ ዜና መዋዕል ካልዕ','መጽሐፈ ዕዝራ','መጽሐፈ ነህምያ','መጽሐፈ አስቴር','መጽሐፈ ኢዮብ',
+    'መዝሙረ ዳዊት','መጽሐፈ ምሳሌ','መጽሐፈ መክብብ','መኃልየ መኃልይ','ትንቢተ ኢሳይያስ','ትንቢተ ኤርምያስ','ሰቆቃወ ኤርምያስ',
+    'ትንቢተ ሕዝቅኤል','ትንቢተ ዳንኤል','ትንቢተ ሆሴዕ','ትንቢተ ኢዮኤል','ትንቢተ አሞጽ','ትንቢተ አብድዩ','ትንቢተ ዮናስ',
+    'ትንቢተ ሚክያስ','ትንቢተ ናሆም','ትንቢተ ዕንባቆም','ትንቢተ ሶፎንያስ','ትንቢተ ሐጌ','ትንቢተ ዘካርያስ','ትንቢተ ሚልክያስ',
+    'የማቴዎስ ወንጌል','የማርቆስ ወንጌል','የሉቃስ ወንጌል','የዮሐንስ ወንጌል','የሐዋርያት ሥራ','ወደ ሮሜ ሰዎች','1ኛ ወደ ቆሮንቶስ ሰዎች',
+    '2ኛ ወደ ቆሮንቶስ ሰዎች','ወደ ገላትያ ሰዎች','ወደ ኤፌሶን ሰዎች','ወደ ፊልጵስዩስ ሰዎች','ወደ ቆላስይስ ሰዎች',
+    '1ኛ ወደ ተሰሎንቄ ሰዎች','2ኛ ወደ ተሰሎንቄ ሰዎች','1ኛ ወደ ጢሞቴዎስ','2ኛ ወደ ጢሞቴዎስ','ወደ ቲቶ','ወደ ፊልሞና',
+    'ወደ ዕብራውያን','የያዕቆብ መልእክት','1ኛ የጴጥሮስ መልእክት','2ኛ የጴጥሮስ መልእክት',
+    '1ኛ የዮሐንስ መልእክት','2ኛ የዮሐንስ መልእክት','3ኛ የዮሐንስ መልእክት','የይሁዳ መልእክት','የዮሐንስ ራእይ'
+  ]
+};
+
+function bibleBookLabel(bookEn){
+  const i = BIBLE_BOOKS.indexOf(bookEn);
+  return (BIBLE_BOOK_NAMES[currentLang] || BIBLE_BOOK_NAMES.en)[i] || bookEn;
+}
+
+function bibleBookOptions(){
+  const names = BIBLE_BOOK_NAMES[currentLang] || BIBLE_BOOK_NAMES.en;
+  return BIBLE_BOOKS.map((b,i) => `<option value="${esc(b)}">${esc(names[i] || b)}</option>`).join('');
+}
+
+
+const DEFAULT_ADMINS = [
+  { id:'admin-root-1', fullName:'Admin',  password:'admin123' },
+  { id:'admin-root-2', fullName:'Admin2', password:'admin123' },
+  { id:'admin-root-3', fullName:'Admin3', password:'admin123' }
+];
+
+const KEY       = 'bsg-app-v17';
+const SESSION   = 'bsg-session-v17';
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
+
+const uid  = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+const now  = () => new Date().toISOString();
+const esc  = s => String(s ?? '').replace(/[&<>"']/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm = s => String(s ?? '').trim().toLowerCase().replace(/\s+/g,' ');
+
+function fmtDate(iso){
+  if(!iso) return '—';
+  const d = new Date(iso);
+  if(isNaN(d)) return iso;
+  return d.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});
+}
+function fmtTime(iso){
+  if(!iso) return '—';
+  const d = new Date(iso);
+  if(isNaN(d)) return iso;
+  const diff = (Date.now() - d.getTime())/1000;
+  if(diff < 60)    return 'just now';
+  if(diff < 3600)  return Math.floor(diff/60) + 'm ago';
+  if(diff < 86400) return Math.floor(diff/3600) + 'h ago';
+  if(diff < 604800)return Math.floor(diff/86400) + 'd ago';
+  return d.toLocaleDateString(undefined,{month:'short',day:'numeric'});
+}
+function fmtSize(bytes){
+  if(bytes < 1024) return bytes + ' B';
+  if(bytes < 1048576) return (bytes/1024).toFixed(1) + ' KB';
+  return (bytes/1048576).toFixed(2) + ' MB';
+}
+function initials(name){
+  return String(name||'?').trim().split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();
+}
+function avatarHTML(user, size){
+  size = size || 34;
+  const style = `width:${size}px;height:${size}px;flex:0 0 ${size}px;`;
+  if(user && user.photo){
+    return `<div class="avatar-sm" style="${style}"><img src="${user.photo}" alt=""></div>`;
+  }
+  const init = esc(initials(user ? user.fullName : '?'));
+  const fontS = Math.round(size * 0.4);
+  return `<div class="avatar-sm" style="${style}font-size:${fontS}px;">${init}</div>`;
+}
+function fileIcon(type, name){
+  const n = (name||'').toLowerCase();
+  if(type && type.startsWith('image/')) return '🖼️';
+  if(type && type.startsWith('audio/')) return '🎵';
+  if(type && type.startsWith('video/')) return '🎬';
+  if(n.endsWith('.pdf')) return '📕';
+  if(n.endsWith('.doc')||n.endsWith('.docx')) return '📘';
+  if(n.endsWith('.xls')||n.endsWith('.xlsx')) return '📗';
+  if(n.endsWith('.ppt')||n.endsWith('.pptx')) return '📙';
+  if(n.endsWith('.txt')||n.endsWith('.md')||n.endsWith('.csv')) return '📄';
+  if(n.endsWith('.mp3')||n.endsWith('.wav')||n.endsWith('.ogg')) return '🎵';
+  if(n.endsWith('.mp4')||n.endsWith('.mov')||n.endsWith('.webm')) return '🎬';
+  if(n.endsWith('.zip')||n.endsWith('.rar')) return '🗜️';
+  return '📎';
+}
+function shortName(name, maxLen){
+  maxLen = maxLen || 28;
+  const s = String(name || '');
+  if(s.length <= maxLen) return s;
+  const dot = s.lastIndexOf('.');
+  if(dot > 0 && s.length - dot <= 6){
+    const ext = s.slice(dot);
+    const base = s.slice(0, dot);
+    const keep = maxLen - ext.length - 1;
+    return base.slice(0, keep) + '…' + ext;
+  }
+  return s.slice(0, maxLen - 1) + '…';
+}
+function nextGroupName(){
+  let max = 0;
+  (state.groups || []).forEach(g => {
+    const m = /^Group\s*(\d+)$/i.exec(g.name || '');
+    if(m) max = Math.max(max, parseInt(m[1], 10));
+  });
+  return 'Group ' + (max + 1);
+}
+function nextActivityName(group){
+  let max = 0;
+  (group.activities || []).forEach(a => {
+    const m = /^Activity\s+(\d+)$/i.exec(a.name || '');
+    if(m) max = Math.max(max, parseInt(m[1], 10));
+  });
+  return 'Activity ' + (max + 1);
+}
+function answerCount(q){
+  if(!q || !q.answers) return 0;
+  return Object.keys(q.answers).filter(k => q.answers[k] && q.answers[k].text).length;
+}
+function getFinishedActivities(){
+  const out = [];
+  (state.groups || []).forEach(g => {
+    (g.activities || []).forEach(a => {
+      if(a.sent){
+        out.push({
+          groupId: g.id, groupName: g.name,
+          activityId: a.id, activityName: a.name,
+          creatorId: a.creatorId || null,
+          sentAt: a.sentAt || a.createdAt || now(),
+          targetGroupIds: a.targetGroupIds || [g.id],
+          questions: a.questions || []
+        });
+      }
+    });
+  });
+  return out.sort((x,y) => (y.sentAt || '').localeCompare(x.sentAt || ''));
+}
+function dataURLtoBlob(dataURL) {
+  try {
+    const arr = dataURL.split(',');
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while(n--) u8arr[n] = bstr.charCodeAt(n);
+    return new Blob([u8arr], {type: mime});
+  } catch(e) { return null; }
+}
+function dataURLtoText(dataURL) {
+  try {
+    const parts = dataURL.split(',');
+    if(parts[0].includes('base64')) return atob(parts[1]);
+    return decodeURIComponent(parts[1]);
+  } catch(e) { return null; }
+}
+
+let modalAction = null;
+function showConfirm(title, message, onConfirm, confirmText) {
+  modalAction = onConfirm;
+  document.getElementById('modal-root').innerHTML = `
+    <div class="modal-overlay" onclick="hideModal()">
+      <div class="modal-box" onclick="event.stopPropagation()">
+        <h3>${esc(title)}</h3>
+        <p style="white-space:pre-wrap;">${esc(message)}</p>
+        <div class="actions">
+          <button class="btn sm" onclick="hideModal()">Cancel</button>
+          <button class="btn sm danger" onclick="confirmAction()">${esc(confirmText || 'Confirm')}</button>
+        </div>
+      </div>
+    </div>`;
+}
+function hideModal(){ document.getElementById('modal-root').innerHTML = ''; modalAction = null; }
+function confirmAction(){ if (modalAction) modalAction(); hideModal(); }
+function showBibleModal(title, contentHtml) {
+  document.getElementById('modal-root').innerHTML = `
+    <div class="modal-overlay bible-modal" style="padding:0;align-items:flex-end;z-index:100">
+      <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="row-between" style="flex:0 0 auto;margin-bottom:10px">
+          <h3 style="margin:0;font-size:18px">📖 ${esc(title)}</h3>
+          <button class="btn sm ghost" onclick="hideModal()">Close</button>
+        </div>
+        <div class="bible-content">${contentHtml}</div>
+      </div>
+    </div>`;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MY PROFILE MODAL — photo upload + name + log out
+   ══════════════════════════════════════════════════════════════ */
+function openMyProfile(){
+  const u = currentUser();
+  if(!u) return;
+  document.getElementById('modal-root').innerHTML = `
+    <div class="modal-overlay" onclick="hideModal()">
+      <div class="modal-box" onclick="event.stopPropagation()" style="max-width:400px;">
+        <div class="row-between" style="margin-bottom:4px;">
+          <h3 style="margin:0;">My Profile</h3>
+          <button class="btn sm ghost" onclick="hideModal()">✕</button>
+        </div>
+
+        <!-- ══ PHOTO UPLOAD AREA ══ -->
+        <div class="profile-photo-wrap">
+          <div class="profile-photo">
+            ${u.photo ? `<img src="${u.photo}" alt="">` : esc(initials(u.fullName))}
+          </div>
+          <div class="row" style="margin-top:12px;gap:8px;justify-content:center;">
+            <label class="photo-upload-btn" style="margin:0;">
+              📷 ${u.photo ? 'Change Photo' : 'Upload Photo'}
+              <input type="file" accept="image/*" onchange="handlePhotoUpload(this)" style="display:none;">
+            </label>
+            ${u.photo ? `<button class="btn sm danger" onclick="removeMyPhoto()">Remove</button>` : ''}
+          </div>
+          <p class="tiny muted center" style="margin-top:8px;">Max 2 MB · Auto-resized to 200×200</p>
+        </div>
+
+        <label>Full name<input id="myprof-name" value="${esc(u.fullName)}"></label>
+        <label>Role<input value="${u.role === 'admin' ? 'Administrator' : 'Member'}" disabled></label>
+
+        <div class="actions" style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px;">
+          <button class="btn" onclick="hideModal()">Cancel</button>
+          <button class="btn primary" onclick="saveMyProfile()">Save</button>
+        </div>
+
+        <!-- ══ LOG OUT ══ -->
+        <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--line);">
+          <button class="btn danger block" onclick="logoutFromProfile()"
+                  style="display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;">
+            🚪 Log out
+          </button>
+        </div>
+      </div>
+    </div>`;
+}
+function handlePhotoUpload(input){
+  const u = currentUser(); if(!u) return;
+  const f = input.files && input.files[0]; if(!f) return;
+  if(!f.type.startsWith('image/')){ alert('Please choose an image file.'); return; }
+  if(f.size > 2*1024*1024){ alert('Image is larger than 2 MB.'); return; }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = new Image();
+    img.onload = () => {
+      const size = 200;
+      const canvas = document.createElement('canvas');
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      const s = Math.min(img.width, img.height);
+      const sx = (img.width - s) / 2, sy = (img.height - s) / 2;
+      ctx.drawImage(img, sx, sy, s, s, 0, 0, size, size);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+      try { u.photo = dataUrl; save(); render(); openMyProfile(); }
+      catch(err){ alert('Storage is full.'); }
+    };
+    img.onerror = () => alert('Could not read that image.');
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(f);
+}
+function removeMyPhoto(){ const u = currentUser(); if(!u) return; u.photo = null; save(); render(); openMyProfile(); }
+function saveMyProfile(){
+  const u = currentUser(); if(!u) return;
+  const name = document.getElementById('myprof-name').value.trim();
+  if(!name){ alert('Please enter your name.'); return; }
+  u.fullName = name; save(); hideModal(); render();
+}
+function logoutFromProfile(){
+  hideModal();
+  setTimeout(() => logout(), 150);
+}
+
+function blankState(){
+  const admins = DEFAULT_ADMINS.map(a => ({
+    id: a.id, fullName: a.fullName, password: a.password,
+    role: 'admin', approved: true, joined: now(),
+    notifSeenAt: now(), photo: null
+  }));
+  return { users: admins, requests:[], documents:[], readings:[], notes:[], groups:[], notifications:[] };
+}
+function load(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(raw){
+      const d = JSON.parse(raw);
+      const loaded = {
+        users:         Array.isArray(d.users)         ? d.users         : [],
+        requests:      Array.isArray(d.requests)      ? d.requests      : [],
+        documents:     Array.isArray(d.documents)     ? d.documents     : [],
+        readings:      Array.isArray(d.readings)      ? d.readings      : [],
+        notes:         Array.isArray(d.notes)         ? d.notes         : [],
+        groups:        Array.isArray(d.groups)        ? d.groups        : [],
+        notifications: Array.isArray(d.notifications) ? d.notifications : []
+      };
+      loaded.groups = loaded.groups.map(g => {
+        const activities = Array.isArray(g.activities) ? g.activities : [];
+        return {
+          id: g.id, name: g.name || 'Group',
+          memberIds: Array.isArray(g.memberIds) ? g.memberIds : [],
+          activities: activities.map(a => ({
+            id: a.id, name: a.name || 'Activity',
+            creatorId: a.creatorId || null,
+            createdAt: a.createdAt || now(),
+            sent: !!a.sent || !!a.finished,
+            sentAt: a.sentAt || a.finishedAt || null,
+            targetGroupIds: Array.isArray(a.targetGroupIds) ? a.targetGroupIds : [g.id],
+            questions: Array.isArray(a.questions) ? a.questions.map(q => ({
+              id: q.id, text: String(q.text || ''),
+              answers: (q.answers && typeof q.answers === 'object') ? q.answers : {}
+            })) : []
+          }))
+        };
+      });
+      DEFAULT_ADMINS.forEach(def => {
+        const exists = loaded.users.find(u => u.id === def.id || norm(u.fullName) === norm(def.fullName));
+        if(!exists){
+          loaded.users.push({
+            id: def.id, fullName: def.fullName, password: def.password,
+            role: 'admin', approved: true, joined: now(),
+            notifSeenAt: now(), photo: null
+          });
+        }
+      });
+      return loaded;
+    }
+  }catch(e){ console.warn('load failed', e); }
+  return blankState();
+}
+let state = load();
+let session = localStorage.getItem(SESSION) || null;
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(state)); }
+  catch(e){ alert('Storage is full.'); console.error(e); }
+}
+const currentUser = () => state.users.find(u => u.id === session) || null;
+
+let ui = {
+  tab: 'home', authTab: 'login',
+  authMsg: null, docMsg: null, readMsg: null, noteMsg: null,
+  folderOpen: {}, adminSlot: 1,
+  notifSelectMode: false, notifSelected: {},
+  qMsg: {}, qOpen: {}
+};
+function setAuthTab(t){ ui.authTab = t; ui.authMsg = null; render(); }
+function setTab(t){
+  ui.tab = t;
+  ui.notifSelectMode = false; ui.notifSelected = {};
+  const u = currentUser();
+  if(t === 'notifs' && u){ u.notifSeenAt = now(); save(); }
+  render();
+}
+function authMsg(type, text){ ui.authMsg = {type, text}; render(); }
+function toggleFolder(id){ ui.folderOpen[id] = !ui.folderOpen[id]; render(); }
+function toggleQOpen(qid){
+  ui.qOpen[qid] = !ui.qOpen[qid];
+  render();
+  if(ui.qOpen[qid]){
+    setTimeout(() => {
+      const ta = document.getElementById('ans-' + qid);
+      if(ta) ta.focus();
+    }, 50);
+  }
+}
+function notify(actorId, text, kind, extra){
+  const n = { id:uid(), actorId, text, kind:kind||'info', date:now() };
+  if(extra) Object.assign(n, extra);
+  state.notifications.unshift(n);
+  if(state.notifications.length > 200) state.notifications.length = 200;
+}
+function unreadCount(u){
+  if(!u) return 0;
+  const seen = u.notifSeenAt || '0';
+  return state.notifications.filter(n => n.date > seen && n.actorId !== u.id).length;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   AUTH
+   ══════════════════════════════════════════════════════════════ */
+function renderAuth(){
+  const t = ui.authTab;
+  let body = '';
+  if(t === 'login'){
+    body = `
+      <label>Full name<input id="li-name" autocomplete="username" placeholder="e.g. Yohannes Tesfaye"></label>
+      <label>Password<input id="li-pass" type="password" autocomplete="current-password" placeholder="••••••••"></label>
+      <button class="btn primary block" onclick="doLogin()">Log in</button>
+      <button class="btn block" style="margin-top:8px" onclick="autoFillAdmin()">⚡ Auto-fill Admin${ui.adminSlot === 1 ? '' : ui.adminSlot}</button>`;
+  } else if(t === 'signup'){
+    body = `
+      <p class="small muted" style="margin-bottom:14px">New here? Send a request to the admin.</p>
+      <label>Full name<input id="su-name" placeholder="e.g. Meron Bekele"></label>
+      <label>Choose a password<input id="su-pass" type="password" placeholder="At least 4 characters"></label>
+      <label>Confirm password<input id="su-pass2" type="password" placeholder="Repeat password"></label>
+      <button class="btn primary block" onclick="doSignup()">Submit request</button>`;
+  } else if(t === 'change'){
+    body = `
+      <p class="small muted" style="margin-bottom:14px">Change your password using your current one.</p>
+      <label>Full name<input id="cp-name" placeholder="Your full name"></label>
+      <label>Old password<input id="cp-old" type="password" placeholder="Current password"></label>
+      <label>New password<input id="cp-new" type="password" placeholder="New password"></label>
+      <label>Confirm new password<input id="cp-new2" type="password" placeholder="Repeat new password"></label>
+      <button class="btn primary block" onclick="doChangePassword()">Change password</button>`;
+  }
+  const msg = ui.authMsg ? `<div class="alert ${ui.authMsg.type}">${esc(ui.authMsg.text)}</div>` : '';
+  return `
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-logo">📖</div>
+      <h1>Bible Study Group</h1>
+      <p class="sub">Read · Share · Grow together</p>
+      <select id="language-selector" class="lang-select" aria-label="Language"
+              onchange="setLanguage(this.value)" style="display:block;margin:0 auto 14px;">
+        <option value="en">English</option>
+        <option value="om">Afaan Oromoo</option>
+        <option value="am">አማርኛ</option>
+      </select>
+      <div class="tabs">
+        <button class="${t==='login'?'on':''}"  onclick="setAuthTab('login')">Log in</button>
+        <button class="${t==='signup'?'on':''}" onclick="setAuthTab('signup')">Sign up</button>
+        <button class="${t==='change'?'on':''}" onclick="setAuthTab('change')">Change&nbsp;password</button>
+      </div>
+      ${msg}
+      ${body}
+      ${t==='login' ? `<div class="hint">Three admins: <b>Admin</b>, <b>Admin2</b>, <b>Admin3</b><br>Password: <b>admin123</b></div>` : ''}
+    </div>
+  </div>`;
+}
+function autoFillAdmin() {
+  const admins = ['Admin','Admin2','Admin3'];
+  const name = admins[ui.adminSlot - 1];
+  document.getElementById('li-name').value = name;
+  document.getElementById('li-pass').value = 'admin123';
+  ui.adminSlot = (ui.adminSlot % 3) + 1;
+  doLogin();
+}
+function doLogin(){
+  const name = document.getElementById('li-name').value;
+  const pass = document.getElementById('li-pass').value;
+  if(!name.trim() || !pass) return authMsg('err','Please fill in all fields.');
+  const matchedDefault = DEFAULT_ADMINS.find(a =>
+    norm(a.fullName) === norm(name) && a.password === pass);
+  if(matchedDefault){
+    let adminUser = state.users.find(u => u.id === matchedDefault.id);
+    if(!adminUser){
+      adminUser = { id: matchedDefault.id, fullName: matchedDefault.fullName,
+        password: matchedDefault.password, role: 'admin', approved: true,
+        joined: now(), notifSeenAt: now(), photo: null };
+      state.users.push(adminUser);
+    } else {
+      adminUser.fullName = matchedDefault.fullName;
+      adminUser.password = matchedDefault.password;
+      adminUser.role = 'admin'; adminUser.approved = true;
+    }
+    save(); session = adminUser.id;
+    localStorage.setItem(SESSION, session);
+    ui.tab = 'home'; ui.authMsg = null; render();
+    return;
+  }
+  const user = state.users.find(u => norm(u.fullName) === norm(name) && u.password === pass);
+  if(!user){
+    const pending = state.requests.find(r => norm(r.fullName) === norm(name));
+    if(pending) return authMsg('info','Your request is still waiting for admin approval.');
+    return authMsg('err','Name or password is incorrect.');
+  }
+  if(!user.approved) return authMsg('info','Your account is not approved yet.');
+  session = user.id; localStorage.setItem(SESSION, session);
+  ui.tab = 'home'; ui.authMsg = null; render();
+}
+function doSignup(){
+  const name = document.getElementById('su-name').value.trim();
+  const pass = document.getElementById('su-pass').value;
+  const pass2 = document.getElementById('su-pass2').value;
+  if(!name || !pass) return authMsg('err','Please fill in all fields.');
+  if(pass.length < 4) return authMsg('err','Password must be at least 4 characters.');
+  if(pass !== pass2) return authMsg('err','Passwords do not match.');
+  const dupUser = state.users.find(u => norm(u.fullName) === norm(name));
+  if(dupUser) return authMsg('err','This full name is already registered.');
+  const dupReq = state.requests.find(r => norm(r.fullName) === norm(name));
+  if(dupReq) return authMsg('info','A sign-up request with this full name is already pending.');
+  const reqId = uid();
+  state.requests.push({ id: reqId, fullName:name, password:pass, date:now(), status:'pending' });
+  notify(null, `New sign-up request: ${name}`, 'request', { requestId: reqId });
+  save();
+  authMsg('ok','Request sent! The admin will review it shortly.');
+}
+function doChangePassword(){
+  const name = document.getElementById('cp-name').value;
+  const oldP = document.getElementById('cp-old').value;
+  const newP = document.getElementById('cp-new').value;
+  const newP2 = document.getElementById('cp-new2').value;
+  if(!name.trim() || !oldP || !newP) return authMsg('err','Please fill in all fields.');
+  if(newP.length < 4) return authMsg('err','New password must be at least 4 characters.');
+  if(newP !== newP2) return authMsg('err','New passwords do not match.');
+  if(newP === oldP) return authMsg('err','New password must be different.');
+  const user = state.users.find(u => norm(u.fullName) === norm(name) && u.password === oldP);
+  if(!user) return authMsg('err','Name or old password is incorrect.');
+  user.password = newP; save();
+  authMsg('ok','Password changed successfully. You can log in now.');
+}
+function logout(){
+  session = null; localStorage.removeItem(SESSION);
+  ui.tab = 'home'; ui.authTab = 'login'; ui.authMsg = null;
+  ui.adminSlot = 1; ui.notifSelectMode = false; ui.notifSelected = {};
+  ui.qOpen = {};
+  render();
+}
+
+/* ══════════════════════════════════════════════════════════════
+   APP SHELL — Tapping "Bible Study Group" opens profile/photo modal
+   ══════════════════════════════════════════════════════════════ */
+function renderApp(u){
+  const unread = unreadCount(u);
+  const pending = state.requests.length;
+  const tabs = [
+    { id:'home',    ic:'🏠', label:'Home' },
+    { id:'reading', ic:'📖', label:'Reading' },
+    { id:'docs',    ic:'📁', label:'Docs' },
+    { id:'notifs',  ic:'🔔', label:'Alerts', badge: unread },
+  ];
+  if(u.role === 'admin') tabs.splice(3, 0, { id:'admin', ic:'⚙️', label:'Admin', badge: pending });
+
+  // Avatar shows user's photo if uploaded, otherwise 📖 emoji
+  const avatarInner = u.photo
+    ? `<img src="${u.photo}" alt="">`
+    : `📖`;
+
+  return `
+  <header class="app-header">
+    <select id="language-selector" class="lang-select" aria-label="Language"
+            onchange="setLanguage(this.value)" onclick="event.stopPropagation()">
+      <option value="en">English</option>
+      <option value="om">Afaan Oromoo</option>
+      <option value="am">አማርኛ</option>
+    </select>
+    <div class="avatar" onclick="openMyProfile()" title="Tap to upload or change your photo">
+      ${avatarInner}
+    </div>
+    <div class="title" onclick="openMyProfile()" title="Tap to upload or change your photo">
+      <b>Bible Study Group</b>
+    </div>
+  </header>
+  <main>${renderTab(u)}</main>
+  <nav class="nav">
+    ${tabs.map(t => `
+      <button class="${ui.tab===t.id?'on':''}" onclick="setTab('${t.id}')">
+        <span class="ic">${t.ic}</span>
+        <span>${t.label}</span>
+        ${t.badge ? `<span class="badge">${t.badge>99?'99+':t.badge}</span>` : ''}
+      </button>`).join('')}
+  </nav>`;
+}
+function renderTab(u){
+  switch(ui.tab){
+    case 'home':    return homeTab(u);
+    case 'reading': return readingTab(u);
+    case 'docs':    return docsTab(u);
+    case 'notifs':  return notifsTab(u);
+    case 'admin':   return u.role==='admin' ? adminTab(u) : homeTab(u);
+    default:        return homeTab(u);
+  }
+}
+function renderMemberItem(m, opts){
+  opts = opts || {};
+  const reads = state.readings.filter(r => r.userId === m.id).length;
+  const removeBtn = opts.removable
+    ? `<button class="member-remove-btn" onclick="event.stopPropagation();removeMember('${m.id}')">Remove</button>`
+    : '';
+  return `
+    <div class="list-item">
+      ${avatarHTML(m, 34)}
+      <div class="li-body">
+        <b>${esc(m.fullName)} ${m.role==='admin' ? '<span class="pill red">admin</span>' : ''}</b>
+        <span>${reads} reading${reads===1?'':'s'} · joined ${esc(fmtDate(m.joined))}</span>
+      </div>
+      ${removeBtn}
+    </div>`;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ADMIN — question editor + target groups
+   ══════════════════════════════════════════════════════════════ */
+function renderAdminQuestion(group, activity, q, qIndex){
+  const label = 'Q' + (qIndex + 1);
+  const cnt = answerCount(q);
+  return `
+    <div class="q-admin-box">
+      <span class="q-badge">${label}</span>
+      <input class="q-input" value="${esc(q.text)}"
+             placeholder="Type the question here…"
+             oninput="updateQuestion('${group.id}','${activity.id}','${q.id}', this.value)">
+      <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;">
+        <button class="btn xs danger q-del"
+                onclick="deleteQuestion('${group.id}','${activity.id}','${q.id}')">✕</button>
+        <span class="tiny muted">${cnt} ans</span>
+      </div>
+    </div>`;
+}
+function renderAdminActivity(group, activity){
+  const key = 'activity:' + group.id + ':' + activity.id;
+  const isOpen = ui.folderOpen[key] !== false;
+  const qs = activity.questions || [];
+  const ansCount = qs.reduce((s, q) => s + answerCount(q), 0);
+  const isSent = !!activity.sent;
+  const targets = activity.targetGroupIds || [group.id];
+  const targetChips = (state.groups || []).map(g => {
+    const on = targets.includes(g.id);
+    const disabled = isSent;
+    return `<label class="chip ${on ? 'on' : ''}" style="${disabled ? 'opacity:.7;cursor:not-allowed;' : ''}">
+      <input type="checkbox" ${on ? 'checked' : ''} ${disabled ? 'disabled' : ''}
+             onchange="toggleActivityTarget('${group.id}','${activity.id}','${g.id}')">
+      ${esc(g.name)}
+    </label>`;
+  }).join('');
+  const questionsHtml = qs.length
+    ? qs.map((q, i) => renderAdminQuestion(group, activity, q, i)).join('')
+    : '<p class="empty" style="padding:12px 0;">No questions yet. Tap "+ Add Question" below.</p>';
+  return `
+    <div class="folder activity-folder">
+      <div class="folder-header" onclick="toggleFolder('${key}')">
+        <span class="folder-icon">${isOpen ? '📝' : '📄'}</span>
+        <div style="flex:1;min-width:0;">
+          <div class="folder-name">${esc(activity.name)} ${isSent ? '<span class="pill ok" style="margin-left:4px;">Sent</span>' : '<span class="pill warn" style="margin-left:4px;">Draft</span>'}</div>
+          <div class="activity-meta"><span class="creator-tag">${qs.length}Q · ${ansCount} answers</span></div>
+        </div>
+        <span class="folder-count">${qs.length}</span>
+        <button class="btn xs danger" onclick="event.stopPropagation();deleteActivity('${group.id}','${activity.id}')">✕</button>
+      </div>
+      ${isOpen ? `<div class="folder-body">
+        <div class="small muted" style="margin-top:6px;"><b>Questions (write each as a rectangle):</b></div>
+        ${questionsHtml}
+        ${!isSent ? `<button class="btn sm block" style="margin-top:10px"
+                        onclick="addQuestion('${group.id}','${activity.id}')">
+          + Add Question
+        </button>` : ''}
+        <div class="small muted" style="margin-top:14px;"><b>Send to these Groups:</b></div>
+        <div class="chips">${targetChips || '<span class="tiny muted">No groups available.</span>'}</div>
+        ${!isSent ? `
+          <button class="btn sm ok block" style="margin-top:12px"
+                  onclick="sendActivity('${group.id}','${activity.id}')">
+            📤 Send & Publish — members will answer
+          </button>` : `
+          <p class="tiny muted" style="margin-top:12px;text-align:center;">
+            ✓ Live. Answers appear in <b>Finished Activities</b> on everyone's Home.
+          </p>`}
+      </div>` : ''}
+    </div>`;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MEMBER — Question card with 2 rectangles
+   ══════════════════════════════════════════════════════════════ */
+function renderMemberQuestion(group, activity, q, qIndex){
+  const u = currentUser();
+  const label = 'Q' + (qIndex + 1);
+  const answers = q.answers || {};
+  const myAnswer = u ? answers[u.id] : null;
+  const isOpen = !!ui.qOpen[q.id];
+  const otherUserIds = Object.keys(answers).filter(uid =>
+    answers[uid] && answers[uid].text && state.users.find(x => x.id === uid));
+  const totalAns = otherUserIds.length;
+
+  const questionRect = `
+    <div class="q-card-question">
+      <span class="q-badge">${label}</span>
+      <div class="q-text ${q.text ? '' : 'muted'}">
+        ${q.text ? esc(q.text) : '(No question text)'}
+      </div>
+    </div>`;
+
+  let answerRect = '';
+  if(!isOpen){
+    const previewText = myAnswer ? myAnswer.text : '';
+    answerRect = `
+      <div class="q-answer-rect ${myAnswer ? 'has-answer' : ''}"
+           onclick="toggleQOpen('${q.id}')">
+        <div class="q-answer-hint">
+          <span class="icon">${myAnswer ? '✅' : '✏️'}</span>
+          <span class="label">
+            ${myAnswer ? 'Your answer (tap to edit)' : 'Tap here to write your answer'}
+          </span>
+          <span class="count-badge">${totalAns} ${totalAns===1?'answer':'answers'}</span>
+        </div>
+        ${previewText ? `<div class="q-answer-preview">"${esc(previewText)}"</div>` : ''}
+      </div>`;
+  } else {
+    answerRect = `
+      <div class="q-answer-rect open">
+        <div class="q-answer-hint">
+          <span class="icon">✏️</span>
+          <span class="label">Write your answer below:</span>
+        </div>
+        <div class="q-answer-open-area">
+          <textarea id="ans-${q.id}"
+                    placeholder="Type your answer here…">${myAnswer ? esc(myAnswer.text) : ''}</textarea>
+          <div class="q-answer-open-actions">
+            <button class="btn sm primary"
+                    onclick="saveAnswer('${group.id}','${activity.id}','${q.id}')">
+              💾 Save Answer
+            </button>
+            ${myAnswer ? `<button class="btn sm danger"
+                onclick="deleteAnswer('${group.id}','${activity.id}','${q.id}')">🗑 Delete</button>` : ''}
+            <button class="btn sm ghost" onclick="toggleQOpen('${q.id}')">Cancel</button>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  const answersListHtml = otherUserIds.length ? `
+    <div class="q-answers-list">
+      <div class="q-list-label">📝 All answers (${otherUserIds.length}):</div>
+      ${otherUserIds.map(uid => {
+        const ans = answers[uid];
+        const author = state.users.find(x => x.id === uid);
+        const mine = u && uid === u.id;
+        return `
+          <div class="q-answer-item">
+            ${avatarHTML(author, 28)}
+            <div class="body">
+              <span class="name">${esc(author.fullName)}${mine ? ' (you)' : ''}</span>
+              <div class="text">${esc(ans.text)}</div>
+              <span class="date">${esc(fmtTime(ans.date))}</span>
+            </div>
+          </div>`;
+      }).join('')}
+    </div>` : `
+    <div class="q-answers-list">
+      <div class="q-list-label">📝 No answers yet — be the first!</div>
+    </div>`;
+
+  return `<div class="q-card">${questionRect}${answerRect}${answersListHtml}</div>`;
+}
+function renderMemberActivity(group, activity){
+  const key = 'activity:' + group.id + ':' + activity.id;
+  const isOpen = ui.folderOpen[key] !== false;
+  const qs = activity.questions || [];
+  const ansCount = qs.reduce((s, q) => s + answerCount(q), 0);
+  const u = currentUser();
+  const myAnsCount = qs.reduce((s, q) =>
+    s + ((q.answers && u && q.answers[u.id] && q.answers[u.id].text) ? 1 : 0), 0);
+  const questionsHtml = qs.length
+    ? qs.map((q, i) => renderMemberQuestion(group, activity, q, i)).join('')
+    : '<p class="empty" style="padding:12px 0;">No questions yet.</p>';
+  return `
+    <div class="folder activity-folder">
+      <div class="folder-header" onclick="toggleFolder('${key}')">
+        <span class="folder-icon">${isOpen ? '📝' : '📄'}</span>
+        <div style="flex:1;min-width:0;">
+          <div class="folder-name">${esc(activity.name)}</div>
+          <div class="activity-meta"><span class="creator-tag">Sent to ${esc(group.name)}</span></div>
+        </div>
+        <span class="folder-count">${qs.length}Q · ${ansCount}A</span>
+      </div>
+      ${isOpen ? `<div class="folder-body">
+        <p class="tiny muted" style="margin:6px 0 4px;">
+          👆 Under each question, tap the <b>answer rectangle</b> (dashed border) to write your answer.
+          ${myAnsCount === qs.length && qs.length > 0 ? '<span style="color:var(--ok);font-weight:600;">✓ You finished all questions.</span>' : ''}
+        </p>
+        ${questionsHtml}
+      </div>` : ''}
+    </div>`;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   GROUPS
+   ══════════════════════════════════════════════════════════════ */
+function renderGroup(group, adminView){
+  const u = currentUser();
+  const approved = state.users.filter(x => x.approved);
+  const membersInGroup = approved.filter(m => (group.memberIds || []).includes(m.id));
+  const memberCount = membersInGroup.length;
+  const key = 'group:' + group.id;
+  const isOpen = ui.folderOpen[key] !== false;
+  const isAdmin = u && u.role === 'admin';
+  const canEdit = adminView || isAdmin;
+
+  let activeActivities;
+  if(isAdmin){
+    activeActivities = (group.activities || []).filter(a => !a.sent);
+  } else {
+    activeActivities = (group.activities || []).filter(a =>
+      (a.targetGroupIds || [group.id]).includes(group.id)
+    );
+  }
+
+  const membersListHtml = membersInGroup.length
+    ? membersInGroup.map(m => renderMemberItem(m)).join('')
+    : '<p class="empty">No members in this group yet.</p>';
+
+  const chipsHtml = canEdit ? `
+    <div class="small muted" style="margin:14px 0 4px;"><b>Tap to add / remove members:</b></div>
+    <div class="chips">
+      ${approved.map(m => {
+        const on = (group.memberIds || []).includes(m.id);
+        return `<label class="chip ${on ? 'on' : ''}">
+          <input type="checkbox" ${on ? 'checked' : ''}
+                 onchange="toggleGroupMember('${group.id}','${m.id}')">
+          ${esc(m.fullName)}${m.role === 'admin' ? ' 👑' : ''}
+        </label>`;
+      }).join('')}
+    </div>` : '';
+
+  const activitiesSection = `
+    <div class="small muted" style="margin:18px 0 6px;">
+      <b>${isAdmin ? 'Draft activities:' : 'Your activities:'}</b>
+    </div>
+    ${activeActivities.length
+      ? activeActivities.map(a =>
+          isAdmin ? renderAdminActivity(group, a) : renderMemberActivity(group, a)
+        ).join('')
+      : '<p class="empty" style="padding:12px 0;">No activities yet.</p>'}
+    ${isAdmin ? `<button class="btn sm primary block" style="margin-top:8px"
+                      onclick="addActivity('${group.id}')">
+                + New Activity (Draft)
+              </button>` : ''}
+  `;
+
+  const deleteGroupBtn = isAdmin
+    ? `<button class="btn xs danger" onclick="event.stopPropagation();deleteGroup('${group.id}')">✕</button>`
+    : '';
+
+  return `
+    <div class="folder">
+      <div class="folder-header" onclick="toggleFolder('${key}')">
+        <span class="folder-icon">${isOpen ? '📂' : '📁'}</span>
+        <span class="folder-name">${esc(group.name)}</span>
+        <span class="folder-count">${memberCount}</span>
+        ${deleteGroupBtn}
+      </div>
+      ${isOpen ? `<div class="folder-body">
+        <div class="small muted" style="margin:6px 0 4px;"><b>Members in this group:</b></div>
+        ${membersListHtml}
+        ${chipsHtml}
+        ${activitiesSection}
+      </div>` : ''}
+    </div>`;
+}
+function renderAdminsFolder(){
+  const approved = state.users.filter(x => x.approved);
+  const admins = approved.filter(u => u.role === 'admin');
+  const isOpen = ui.folderOpen['__admins'] !== false;
+  return `
+    <div class="folder admins-folder">
+      <div class="folder-header" onclick="toggleFolder('__admins')">
+        <span class="folder-icon">👑</span>
+        <span class="folder-name">Admins</span>
+        <span class="folder-count">${admins.length}</span>
+      </div>
+      ${isOpen ? `<div class="folder-body">${admins.map(m => renderMemberItem(m)).join('')}</div>` : ''}
+    </div>`;
+}
+function renderListOfMembers(removable){
+  const approved = state.users.filter(x => x.approved);
+  const nonAdmins = approved.filter(u => u.role !== 'admin');
+  const userGroup = {};
+  state.groups.forEach(g => {
+    (g.memberIds || []).forEach(uid => { userGroup[uid] = g.id; });
+  });
+  const ungrouped = nonAdmins.filter(m => !userGroup[m.id]);
+  if(!ungrouped.length) return '';
+  const isOpen = ui.folderOpen['__members'] !== false;
+  return `
+    <div class="folder">
+      <div class="folder-header" onclick="toggleFolder('__members')">
+        <span class="folder-icon">${isOpen ? '📂' : '📁'}</span>
+        <span class="folder-name">List Of Members</span>
+        <span class="folder-count">${ungrouped.length}</span>
+      </div>
+      ${isOpen ? `<div class="folder-body">
+        <p class="small muted" style="margin:4px 0 8px;">
+          Members not assigned to any group above.${removable ? ' Tap Remove to delete.' : ''}
+        </p>
+        ${ungrouped.map(m => renderMemberItem(m, {removable: !!removable})).join('')}
+      </div>` : ''}
+    </div>`;
+}
+function renderGroupedMembers(adminView){
+  const u = currentUser();
+  const groups = state.groups || [];
+  const visibleGroups = adminView
+    ? groups
+    : groups.filter(g => u && (g.memberIds || []).includes(u.id));
+  if(!adminView){
+    if(!visibleGroups.length){
+      return '<p class="empty">You have not been assigned to any group yet. Please contact an admin.</p>';
+    }
+    return visibleGroups.map(g => renderGroup(g, false)).join('');
+  }
+  return renderAdminsFolder()
+       + visibleGroups.map(g => renderGroup(g, true)).join('')
+       + renderListOfMembers(true);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   FINISHED ACTIVITY CARD
+   ══════════════════════════════════════════════════════════════ */
+function renderFinishedActivityCard(f){
+  const creator = f.creatorId ? state.users.find(x => x.id === f.creatorId) : null;
+  const qs = f.questions || [];
+  const questionsHtml = qs.length ? qs.map((q, i) => {
+    const label = 'Q' + (i + 1);
+    const answers = q.answers || {};
+    const userIds = Object.keys(answers).filter(uid =>
+      answers[uid] && answers[uid].text && state.users.find(x => x.id === uid));
+    const answersHtml = userIds.length ? userIds.map(uid => {
+      const ans = answers[uid];
+      const author = state.users.find(x => x.id === uid);
+      return `
+        <div class="fq-answer">
+          ${avatarHTML(author, 28)}
+          <div class="fq-answer-body">
+            <span class="fq-answer-name">${esc(author.fullName)}</span>
+            <div class="fq-answer-text">${esc(ans.text)}</div>
+            <span class="fq-answer-date">${esc(fmtTime(ans.date))}</span>
+          </div>
+        </div>`;
+    }).join('') : `<div class="fq-no-answer">No answers yet.</div>`;
+    return `
+      <div class="finished-q">
+        <div class="fq-head">
+          <span class="fq-num">${label}</span>
+          <div class="fq-text ${q.text ? '' : 'muted'}">${q.text ? esc(q.text) : '(no question text)'}</div>
+        </div>
+        <div class="fq-answers">${answersHtml}</div>
+      </div>`;
+  }).join('') : '<p class="empty" style="padding:12px 0;">This activity had no questions.</p>';
+  const totalAnswers = qs.reduce((s, q) => s + Object.keys(q.answers || {})
+    .filter(k => q.answers[k] && q.answers[k].text).length, 0);
+  const groupChips = (f.targetGroupIds || []).map(gid => {
+    const g = state.groups.find(x => x.id === gid);
+    return g ? `<span class="group-name-chip">${esc(g.name)}</span>` : '';
+  }).join(' ');
+  return `
+    <div class="finished-card">
+      <div class="finished-card-header">
+        <span class="icon">✅</span>
+        <div class="title-wrap">
+          <span class="title">${groupChips} &nbsp;${esc(f.activityName)}</span>
+          <span class="subtitle">
+            ${creator ? 'by ' + esc(creator.fullName) + ' · ' : ''}
+            ${qs.length} questions · ${totalAnswers} answers ·
+            sent ${esc(fmtTime(f.sentAt))}
+          </span>
+        </div>
+      </div>
+      <div class="finished-card-body">${questionsHtml}</div>
+    </div>`;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   HOME
+   ══════════════════════════════════════════════════════════════ */
+function homeTab(u){
+  const approved = state.users.filter(x => x.approved);
+  const totalReadings = state.readings.length;
+  const myReadings = state.readings.filter(r => r.userId === u.id).length;
+  const recent = state.readings.slice(0, 6);
+  const feed = recent.length ? recent.map(r => {
+    const reader = state.users.find(x => x.id === r.userId);
+    return `
+      <div class="list-item">
+        ${avatarHTML(reader, 34)}
+        <div class="li-body">
+          <b>${esc(reader ? reader.fullName : 'Unknown')}</b>
+          <span>read <b style="color:var(--accent);font-weight:500">${esc(bibleBookLabel(r.book))} ${esc(r.chapters)}</b> · ${esc(fmtTime(r.date))}</span>
+        </div>
+      </div>`;
+  }).join('') : '<p class="empty">No reading activity yet.</p>';
+
+  const finished = getFinishedActivities();
+  const finishedHtml = finished.length
+    ? finished.map(f => renderFinishedActivityCard(f)).join('')
+    : '<p class="empty">No activities have been sent yet.</p>';
+
+  const allGroupsHtml = (state.groups || []).map(g => renderGroup(g, false)).join('');
+
+  return `
+    <h2>Welcome, ${esc(u.fullName.split(' ')[0])} 👋</h2>
+    <div class="stats">
+      <div class="stat"><b>${approved.length}</b><span>Members</span></div>
+      <div class="stat"><b>${state.groups.length}</b><span>Groups</span></div>
+      <div class="stat"><b>${totalReadings}</b><span>Total readings</span></div>
+      <div class="stat"><b>${myReadings}</b><span>Your readings</span></div>
+    </div>
+
+    <div class="card">
+      <div class="row-between"><h3 style="margin:0">✅ Finished Activities (${finished.length})</h3></div>
+      <p class="tiny muted" style="margin-top:0;margin-bottom:8px;">
+        Every sent activity — with its <b>Group name</b>, questions, and <b>all member answers</b>.
+      </p>
+      ${finishedHtml}
+    </div>
+
+    <div class="card">
+      <div class="row-between">
+        <h3 style="margin:0">Recent reading activity</h3>
+        <button class="btn xs" onclick="setTab('reading')">Log reading</button>
+      </div>
+      ${feed}
+    </div>
+
+    <div class="card">
+      <div class="row-between">
+        <h3 style="margin:0">👥 Groups, Admins & Members</h3>
+        <span class="pill">${state.groups.length} group${state.groups.length===1?'':'s'} · ${approved.length} member${approved.length===1?'':'s'}</span>
+      </div>
+      <p class="tiny muted" style="margin-top:0;margin-bottom:12px;">
+        Tap any group to expand its members and answer its questions.
+      </p>
+      ${renderAdminsFolder()}
+      ${allGroupsHtml || '<p class="empty">No groups created yet.</p>'}
+      ${renderListOfMembers(false)}
+    </div>
+
+    <div class="card">
+      <h3>Quick actions</h3>
+      <div class="row">
+        <button class="btn" onclick="setTab('reading')">📖 Log a reading</button>
+        <button class="btn" onclick="setTab('docs')">📁 Documents (${state.documents.length})</button>
+        ${u.role==='admin' ? `<button class="btn" onclick="setTab('admin')">⚙️ Manage (${state.requests.length})</button>` : ''}
+      </div>
+    </div>`;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   READING
+   ══════════════════════════════════════════════════════════════ */
+function readingTab(u){
+  const myReadings = state.readings.filter(r => r.userId === u.id);
+  const myNotes = state.notes.filter(n => n.userId === u.id);
+  const bookOptions = bibleBookOptions();
+  const msg = ui.readMsg ? `<div class="alert ${ui.readMsg.type}">${esc(ui.readMsg.text)}</div>` : '';
+  const noteMsg = ui.noteMsg ? `<div class="alert ${ui.noteMsg.type}">${esc(ui.noteMsg.text)}</div>` : '';
+  const feed = state.readings.length ? state.readings.slice(0, 40).map(r => {
+    const reader = state.users.find(x => x.id === r.userId);
+    const mine = r.userId === u.id;
+    return `
+      <div class="list-item">
+        ${avatarHTML(reader, 34)}
+        <div class="li-body">
+          <b>${esc(reader ? reader.fullName : 'Unknown')}${mine ? ' (you)' : ''}</b>
+          <span>read <b style="color:var(--accent);font-weight:500">${esc(bibleBookLabel(r.book))} ${esc(r.chapters)}</b>
+          ${r.note ? ' — ' + esc(r.note) : ''}</span>
+          <span style="display:block;margin-top:2px">${esc(fmtDate(r.date))} · ${esc(fmtTime(r.date))}</span>
+        </div>
+        ${mine ? `<button class="btn xs danger" onclick="delReading('${r.id}')">✕</button>` : ''}
+      </div>`;
+  }).join('') : '<p class="empty">No readings logged yet. Be the first!</p>';
+  const notesList = myNotes.length ? myNotes.map(n => `
+    <div class="note-card">
+      <div class="note-text">${esc(n.text)}</div>
+      <div class="note-meta">
+        <small class="muted tiny">${esc(fmtDate(n.date))} · ${esc(fmtTime(n.date))}</small>
+        <button class="btn xs danger" onclick="delNote('${n.id}')">Delete</button>
+      </div>
+    </div>`).join('') : '<p class="empty">You have no saved notes yet.</p>';
+  return `
+    <h2>Bible Reading</h2>
+    ${msg}
+    <div class="card">
+      <h3>Log what you read</h3>
+      <div class="grid2">
+        <label>Book<select id="rd-book">${bookOptions}</select></label>
+        <label>Chapter(s)
+          <div class="row" style="gap:8px;flex-wrap:nowrap">
+            <input id="rd-chapters" placeholder="e.g. 3  or  1-5" style="flex:1">
+            <button class="btn primary" onclick="readChapter()" style="padding:11px 14px;margin-top:5px;white-space:nowrap">Read</button>
+          </div>
+        </label>
+      </div>
+      <label>Note (optional)<textarea id="rd-note" rows="4" placeholder="Write your thoughts…"></textarea></label>
+      <div class="row" style="gap:8px">
+        <button class="btn primary" style="flex:1" onclick="logReading()">✅ I finished reading — notify the group</button>
+        <button class="btn" onclick="saveStandaloneNote()">💾 Save Note</button>
+      </div>
+    </div>
+    ${noteMsg}
+    <div class="card">
+      <div class="row-between"><h3 style="margin:0">📒 My Saved Notes (${myNotes.length})</h3></div>
+      ${notesList}
+    </div>
+    <div class="card">
+      <div class="row-between">
+        <h3 style="margin:0">Group reading log</h3>
+        <span class="pill">${state.readings.length} total</span>
+      </div>
+      ${feed}
+    </div>
+    <p class="muted small center" style="margin-top:-4px">You have logged ${myReadings.length} reading${myReadings.length===1?'':'s'}.</p>`;
+}
+function saveStandaloneNote(){
+  const u = currentUser(); if(!u) return;
+  const noteEl = document.getElementById('rd-note');
+  const text = noteEl.value.trim();
+  if(!text){ ui.noteMsg = {type:'err', text:'Please write something before saving.'}; return render(); }
+  state.notes.unshift({ id: uid(), userId: u.id, text, date: now() });
+  notify(u.id, `${u.fullName} saved a personal note`, 'note');
+  save(); ui.noteMsg = {type:'ok', text:'Note saved!'}; render();
+}
+function delNote(id){
+  const n = state.notes.find(x => x.id === id); if(!n) return;
+  showConfirm('Delete Note', 'Delete this note?', () => {
+    state.notes = state.notes.filter(x => x.id !== id); save(); render();
+  }, 'Delete');
+}
+
+/* ══════════════════════════════════════════════════════════════
+   BIBLE FETCH — English only, reliable (bible-api.com)
+   ══════════════════════════════════════════════════════════════ */
+async function readChapter(){
+  const u = currentUser(); if(!u) return;
+  const bookEn = document.getElementById('rd-book').value;
+  const rawChap = document.getElementById('rd-chapters').value.trim();
+  if(!rawChap){ ui.readMsg = {type:'err', text:'Please enter a chapter number to read.'}; return render(); }
+  const chapter = rawChap.split('-')[0].trim();
+  if(!/^\d+$/.test(chapter)){ ui.readMsg = {type:'err', text:'Please enter a valid chapter number.'}; return render(); }
+
+  const displayBook = bibleBookLabel(bookEn);
+  const displayTitle = displayBook + ' ' + chapter;
+  showBibleModal(displayTitle, '<p class="center muted" style="margin-top:40px">📖<br><br>Loading…</p>');
+
+  try {
+    let verses = [];
+    let reference = displayTitle;
+    let translationName = '';
+
+    if(currentLang === 'om' || currentLang === 'am'){
+      const version = currentLang === 'om' ? 'oromo' : 'amhara';
+      const bookId = BIBLE_BOOK_INDEX[bookEn];
+      const res = await fetch(`https://bible-api-kappa.vercel.app/api/v1/verses/${version}/${bookId}/${chapter}`);
+      if(!res.ok) throw new Error('fail');
+      const data = await res.json();
+      if(!data.data || !data.data.length) throw new Error('no verses');
+      verses = data.data.map(v => ({ verse: v.verseNum, text: v.verse }));
+      translationName = currentLang === 'om' ? 'Macaafa Qulqulluu Afaan Oromoo' : 'መጽሐፍ ቅዱስ አማርኛ';
+    } else {
+      const res = await fetch(`https://bible-api.com/${encodeURIComponent(bookEn)}+${chapter}?translation=kjv`);
+      if(!res.ok) throw new Error('fail');
+      const data = await res.json();
+      if(!data.verses || !data.verses.length) throw new Error('no verses');
+      verses = data.verses.map(v => ({ verse: v.verse, text: v.text }));
+      reference = data.reference || displayTitle;
+      translationName = 'King James Version';
+    }
+
+    const html = `
+      ${translationName ? `<p class="center muted tiny" style="margin-bottom:14px">${esc(translationName)}</p>` : ''}
+      ${verses.map(v => `<p><sup>${esc(v.verse)}</sup> ${esc(v.text)}</p>`).join('')}
+    `;
+    showBibleModal(reference, html);
+  } catch(e) {
+    showBibleModal(displayTitle,
+      `<div class="center" style="padding:30px 0">
+        <p class="muted" style="font-size:34px">📖</p>
+        <p class="small muted" style="margin-top:12px">
+          Could not load this chapter right now.<br>
+          Please check your internet connection and try again.
+        </p>
+      </div>`);
+  }
+}
+
+function logReading(){
+  const u = currentUser(); if(!u) return;
+  const book = document.getElementById('rd-book').value;
+  const chapters = document.getElementById('rd-chapters').value.trim();
+  const note = document.getElementById('rd-note').value.trim();
+  if(!chapters){ ui.readMsg = {type:'err', text:'Please enter the chapter(s) you read.'}; return render(); }
+  state.readings.unshift({ id: uid(), userId: u.id, book, chapters, note, date: now() });
+  if(note){
+    state.notes.unshift({ id: uid(), userId: u.id, text: `${book} ${chapters} — ${note}`, date: now() });
+  }
+  notify(u.id, `${u.fullName} finished reading ${book} ${chapters}`, 'reading');
+  save(); ui.readMsg = {type:'ok', text:`Logged!`}; render();
+}
+function delReading(id){
+  const r = state.readings.find(x => x.id === id); if(!r) return;
+  showConfirm('Delete Reading Entry', `Delete your reading of "${r.book} ${r.chapters}"?`, () => {
+    state.readings = state.readings.filter(x => x.id !== id); save(); render();
+  }, 'Delete');
+}
+
+/* ══════════════════════════════════════════════════════════════
+   DOCUMENTS
+   ══════════════════════════════════════════════════════════════ */
+function docsTab(u){
+  const msg = ui.docMsg ? `<div class="alert ${ui.docMsg.type}">${esc(ui.docMsg.text)}</div>` : '';
+  const list = state.documents.length ? state.documents.map(d => {
+    const uploader = state.users.find(x => x.id === d.uploadedBy);
+    const uploaderName = uploader ? uploader.fullName.split(' ')[0] : 'Unknown';
+    return `
+      <div class="doc-item">
+        <div class="doc-icon">${fileIcon(d.type, d.name)}</div>
+        <div class="doc-info">
+          <span class="doc-name" title="${esc(d.name)}">${esc(shortName(d.name, 32))}</span>
+          <span class="doc-meta">${esc(fmtSize(d.size))} · ${esc(uploaderName)} · ${esc(fmtDate(d.date))}</span>
+        </div>
+        <div class="doc-actions">
+          <button class="btn xs" onclick="previewDoc('${d.id}')">👁️</button>
+          <button class="btn xs" onclick="openDoc('${d.id}')">📂</button>
+          <button class="btn xs" onclick="downloadDoc('${d.id}')">⬇️</button>
+          ${(u.role==='admin' || d.uploadedBy===u.id) ? `<button class="btn xs danger" onclick="delDoc('${d.id}')">✕</button>` : ''}
+        </div>
+      </div>`;
+  }).join('') : '<p class="empty">No documents uploaded yet.</p>';
+  return `
+    <h2>Documents</h2>
+    <p class="muted small" style="margin-top:-6px">Every member can view, open, download, and edit these files.</p>
+    ${msg}
+    <div class="card">
+      <h3>Upload a document</h3>
+      <label class="file-input" for="doc-file">📎 Tap to choose a file<br><span class="tiny">(PDF, Word, Excel, image, audio — max 10 MB each)</span></label>
+      <input type="file" id="doc-file" onchange="uploadDoc(this)">
+      <div id="doc-picked" class="small muted" style="margin-bottom:10px"></div>
+      <button class="btn primary block" id="doc-btn" onclick="uploadDoc(null)" disabled style="opacity:.5">Upload</button>
+    </div>
+    <div class="card">
+      <div class="row-between"><h3 style="margin:0">All documents</h3><span class="pill">${state.documents.length} file${state.documents.length===1?'':'s'}</span></div>
+      ${list}
+    </div>`;
+}
+let pendingFile = null;
+function uploadDoc(input){
+  if(input && input.files){
+    const f = input.files[0]; if(!f) return;
+    if(f.size > MAX_FILE_SIZE){ ui.docMsg = {type:'err', text:'File is larger than 10 MB.'}; return render(); }
+    pendingFile = f;
+    const picked = document.getElementById('doc-picked');
+    const btn = document.getElementById('doc-btn');
+    if(picked) picked.textContent = `Selected: ${shortName(f.name, 40)} (${fmtSize(f.size)})`;
+    if(btn){ btn.disabled = false; btn.style.opacity = '1'; }
+    return;
+  }
+  if(!pendingFile){ ui.docMsg = {type:'err', text:'Please choose a file first.'}; return render(); }
+  const u = currentUser(); const f = pendingFile;
+  const reader = new FileReader();
+  reader.onload = () => {
+    state.documents.unshift({ id: uid(), name: f.name, type: f.type || 'application/octet-stream',
+      size: f.size, data: reader.result, uploadedBy: u ? u.id : null, date: now() });
+    notify(u ? u.id : null, `${u ? u.fullName : 'Someone'} uploaded "${f.name}"`, 'document');
+    save(); pendingFile = null;
+    ui.docMsg = {type:'ok', text:`"${shortName(f.name, 40)}" uploaded successfully.`};
+    render();
+  };
+  reader.onerror = () => { ui.docMsg = {type:'err', text:'Could not read that file.'}; render(); };
+  reader.readAsDataURL(f);
+}
+function downloadDoc(id){
+  const d = state.documents.find(x => x.id === id); if(!d) return;
+  try {
+    const blob = dataURLtoBlob(d.data); if(!blob) throw new Error('fail');
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = d.name; a.rel = 'noopener';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  } catch(e){
+    const a = document.createElement('a');
+    a.href = d.data; a.download = d.name;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  }
+}
+function openDoc(id){
+  const d = state.documents.find(x => x.id === id); if(!d) return;
+  try {
+    const blob = dataURLtoBlob(d.data); if(!blob) throw new Error('fail');
+    const url = URL.createObjectURL(blob);
+    const w = window.open(url, '_blank');
+    if(!w){ downloadDoc(id); return; }
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  } catch(e){ downloadDoc(id); }
+}
+function previewDoc(id){
+  const d = state.documents.find(x => x.id === id); if(!d) return;
+  const n = (d.name || '').toLowerCase();
+  const isImage = d.type && d.type.startsWith('image/');
+  const isPDF = d.type === 'application/pdf' || n.endsWith('.pdf');
+  const isAudio = d.type && d.type.startsWith('audio/');
+  const isVideo = d.type && d.type.startsWith('video/');
+  const isText = /\.(txt|md|csv|json|log|xml|html|css|js|ts|ini|yml|yaml)$/.test(n);
+  const isOffice = /\.(doc|docx|xls|xlsx|ppt|pptx|odt|ods|odp)$/.test(n);
+  let contentHtml = '';
+  if(isImage){ contentHtml = `<div style="text-align:center;"><img src="${d.data}" style="max-width:100%; max-height:65vh; border-radius:8px;"></div>`; }
+  else if(isPDF){ contentHtml = `<div style="width:100%; height:70vh; background:#f7f7f7; border-radius:8px; overflow:hidden;"><object data="${d.data}" type="application/pdf" style="width:100%; height:100%; border:none;"><iframe src="${d.data}" style="width:100%; height:100%; border:none;"></iframe></object></div>`; }
+  else if(isAudio){ contentHtml = `<div class="center" style="padding:20px 0"><p class="muted" style="font-size:56px; margin-bottom:14px">${fileIcon(d.type, d.name)}</p><audio controls style="width:100%;" src="${d.data}"></audio></div>`; }
+  else if(isVideo){ contentHtml = `<div style="text-align:center;"><video controls style="max-width:100%; max-height:65vh;" src="${d.data}"></video></div>`; }
+  else if(isText){ const text = dataURLtoText(d.data); contentHtml = text !== null ? `<pre style="white-space:pre-wrap; word-break:break-word; font-size:13px; background:#f7f7f7; padding:14px; border-radius:8px; max-height:65vh; overflow:auto; margin:0;">${esc(text)}</pre>` : `<p class="muted center">Could not read file.</p>`; }
+  else if(isOffice){ contentHtml = `<div class="center" style="padding:30px 0"><p class="muted" style="font-size:56px; margin-bottom:10px">${fileIcon(d.type, d.name)}</p><p class="small muted">Office documents can't be previewed inside the browser.</p><div class="row" style="justify-content:center; margin-top:18px; gap:8px"><button class="btn primary" onclick="openDoc('${d.id}')">📂 Open</button><button class="btn" onclick="downloadDoc('${d.id}')">⬇️ Download</button></div></div>`; }
+  else { contentHtml = `<div class="center" style="padding:30px 0"><p class="muted" style="font-size:56px; margin-bottom:10px">${fileIcon(d.type, d.name)}</p><p class="small muted">Preview not available.</p><div class="row" style="justify-content:center; margin-top:18px; gap:8px"><button class="btn primary" onclick="openDoc('${d.id}')">📂 Open</button><button class="btn" onclick="downloadDoc('${d.id}')">⬇️ Download</button></div></div>`; }
+  document.getElementById('modal-root').innerHTML = `
+    <div class="modal-overlay doc-preview-modal" style="padding:10px; align-items:center;" onclick="hideModal()">
+      <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="row-between" style="margin-bottom:10px; gap:8px;">
+          <h3 style="margin:0;font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:1;">${esc(shortName(d.name, 40))}</h3>
+          <div class="row" style="gap:6px; flex:0 0 auto">
+            <button class="btn xs" onclick="openDoc('${d.id}')">📂</button>
+            <button class="btn xs primary" onclick="downloadDoc('${d.id}')">⬇️</button>
+            <button class="btn xs ghost" onclick="hideModal()">✕</button>
+          </div>
+        </div>
+        <div style="flex:1; overflow-y:auto; padding-top:6px;">${contentHtml}</div>
+      </div>
+    </div>`;
+}
+function delDoc(id){
+  const d = state.documents.find(x => x.id === id); if(!d) return;
+  showConfirm('Delete Document', `Delete "${shortName(d.name, 40)}"?`, () => {
+    state.documents = state.documents.filter(x => x.id !== id); save(); render();
+  }, 'Delete');
+}
+
+/* ══════════════════════════════════════════════════════════════
+   NOTIFICATIONS
+   ══════════════════════════════════════════════════════════════ */
+function notifsTab(u){
+  const seen = u.notifSeenAt || '0';
+  const isAdmin = u.role === 'admin';
+  const selectMode = ui.notifSelectMode;
+  const total = state.notifications.length;
+  const selectedCount = Object.keys(ui.notifSelected).filter(k => ui.notifSelected[k]).length;
+  const allSelected = total > 0 && selectedCount === total;
+  const list = total ? state.notifications.map(n => {
+    const actor = state.users.find(x => x.id === n.actorId);
+    const isNew = n.date > seen && n.actorId !== u.id;
+    const isChecked = !!ui.notifSelected[n.id];
+    let icon = '🔔';
+    if(n.kind === 'reading')  icon = '📖';
+    if(n.kind === 'document') icon = '📁';
+    if(n.kind === 'request')  icon = '📝';
+    if(n.kind === 'approve')  icon = '✅';
+    if(n.kind === 'reject')   icon = '❌';
+    if(n.kind === 'note')     icon = '📒';
+    if(n.kind === 'group')    icon = '📂';
+    if(n.kind === 'activity') icon = '📤';
+    if(n.kind === 'answer')   icon = '💬';
+    let actionsHtml = '';
+    if(!selectMode && n.kind === 'request' && isAdmin && n.requestId){
+      const req = state.requests.find(r => r.id === n.requestId);
+      if(req){
+        actionsHtml = `<div class="notif-actions">
+          <button class="notif-action-btn accept" onclick="approveFromNotif('${n.id}','${req.id}')">✓ Accept</button>
+          <button class="notif-action-btn reject" onclick="rejectFromNotif('${n.id}','${req.id}')">✕ Reject</button>
+        </div>`;
+      } else {
+        actionsHtml = `<div class="notif-actions"><span class="pill ok">✓ Handled</span></div>`;
+      }
+    }
+    const checkHtml = selectMode
+      ? `<input type="checkbox" class="notif-check" ${isChecked ? 'checked' : ''}
+                onclick="event.stopPropagation()" onchange="toggleNotifSelected('${n.id}')">` : '';
+    const selectableClass = selectMode ? `selectable ${isChecked ? 'selected' : ''}` : '';
+    return `
+      <div class="notif ${isNew ? '' : 'seen'} ${selectableClass}"
+           ${selectMode ? `onclick="toggleNotifSelected('${n.id}')"` : ''}>
+        ${checkHtml}
+        <div class="dot"></div>
+        ${actor ? `<div style="flex:0 0 32px;">${avatarHTML(actor, 32)}</div>`
+                : `<div class="li-icon" style="flex:0 0 32px;height:32px;font-size:15px">${icon}</div>`}
+        <div class="body">
+          <p>${esc(n.text)}</p>
+          <small>${esc(fmtTime(n.date))}${actor ? ' · ' + esc(actor.fullName) : ''}</small>
+          ${actionsHtml}
+        </div>
+      </div>`;
+  }).join('') : '<p class="empty">No notifications yet.</p>';
+  const toolbar = total ? `
+    <div class="row-between" style="margin-bottom:12px;gap:8px;flex-wrap:wrap">
+      <div class="row" style="gap:10px;align-items:center;flex-wrap:wrap">
+        ${selectMode ? `
+          <label class="select-all-label">
+            <input type="checkbox" ${allSelected ? 'checked' : ''} onchange="selectAllNotifs(this.checked)">
+            <span>Select all</span>
+          </label>
+          <span class="pill red">${selectedCount} selected</span>
+        ` : `<span class="muted small">${total} notification${total===1?'':'s'}</span>`}
+      </div>
+      <button class="btn sm ${selectMode ? 'primary' : ''}" onclick="toggleNotifSelectMode()">
+        ${selectMode ? '✕ Cancel' : '☑ Select'}
+      </button>
+    </div>` : '';
+  const deleteBar = (selectMode && selectedCount > 0) ? `
+    <button class="btn danger block" style="margin-bottom:14px" onclick="deleteSelectedNotifs()">
+      🗑️ Delete ${selectedCount} selected
+    </button>` : '';
+  return `
+    <h2>Notifications</h2>
+    <p class="muted small" style="margin-top:-6px">
+      ${selectMode ? 'Tap to select, then Delete.' : 'Admins can accept or reject sign-up requests here.'}
+    </p>
+    ${toolbar}
+    ${deleteBar}
+    <div class="card">${list}</div>
+    ${total && !selectMode ? `<button class="btn block" onclick="clearNotifs()">Clear all notifications</button>` : ''}`;
+}
+function toggleNotifSelectMode(){ ui.notifSelectMode = !ui.notifSelectMode; ui.notifSelected = {}; render(); }
+function toggleNotifSelected(id){
+  if(!ui.notifSelectMode) return;
+  if(ui.notifSelected[id]) delete ui.notifSelected[id]; else ui.notifSelected[id] = true;
+  render();
+}
+function selectAllNotifs(checked){
+  if(checked){ ui.notifSelected = {}; state.notifications.forEach(n => { ui.notifSelected[n.id] = true; }); }
+  else ui.notifSelected = {};
+  render();
+}
+function deleteSelectedNotifs(){
+  const ids = Object.keys(ui.notifSelected).filter(k => ui.notifSelected[k]);
+  if(!ids.length) return;
+  showConfirm('Delete Notifications', `Delete ${ids.length} selected?`, () => {
+    const setIds = {}; ids.forEach(id => { setIds[id] = true; });
+    state.notifications = state.notifications.filter(n => !setIds[n.id]);
+    ui.notifSelected = {}; ui.notifSelectMode = false;
+    save(); render();
+  }, 'Delete');
+}
+function approveFromNotif(notifId, requestId){
+  const r = state.requests.find(x => x.id === requestId);
+  if(!r){ state.notifications = state.notifications.filter(n => n.id !== notifId); save(); render(); return; }
+  const name = r.fullName;
+  showConfirm('Approve Request', `Approve ${name}?`, () => {
+    state.users.push({ id: uid(), fullName: r.fullName, password: r.password,
+      role: 'member', approved: true, joined: now(), notifSeenAt: now(), photo: null });
+    state.requests = state.requests.filter(x => x.id !== requestId);
+    state.notifications = state.notifications.filter(n => n.id !== notifId);
+    notify(null, `${name} was approved and joined`, 'approve');
+    save(); render();
+  }, 'Accept');
+}
+function rejectFromNotif(notifId, requestId){
+  const r = state.requests.find(x => x.id === requestId);
+  const name = r ? r.fullName : 'this person';
+  showConfirm('Reject Request', `Reject ${name}?`, () => {
+    state.requests = state.requests.filter(x => x.id !== requestId);
+    state.notifications = state.notifications.filter(n => n.id !== notifId);
+    notify(null, `Request from ${name} was rejected`, 'reject');
+    save(); render();
+  }, 'Reject');
+}
+function clearNotifs(){
+  const u = currentUser(); if(!u) return;
+  showConfirm('Clear All', 'Clear all notifications for everyone?', () => {
+    state.notifications = []; u.notifSeenAt = now(); save(); render();
+  }, 'Clear');
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ADMIN
+   ══════════════════════════════════════════════════════════════ */
+function adminTab(u){
+  const requests = state.requests.length ? state.requests.map(r => `
+    <div class="list-item">
+      <div class="avatar-sm" style="background:#fff8e1;border-color:#ffe082;color:#b45309;">📝</div>
+      <div class="li-body"><b>${esc(r.fullName)}</b><span>Requested ${esc(fmtTime(r.date))}</span></div>
+      <div class="row" style="flex:0 0 auto;gap:6px">
+        <button class="btn xs primary" onclick="approveRequest('${r.id}')">✓</button>
+        <button class="btn xs danger"  onclick="rejectRequest('${r.id}')">✕</button>
+      </div>
+    </div>`).join('') : '<p class="empty">No pending requests.</p>';
+  const groupsHtml = state.groups.length
+    ? state.groups.map(g => renderGroup(g, true)).join('')
+    : '<p class="empty">No groups yet. Tap "+ Create Group".</p>';
+  return `
+    <h2>Admin panel</h2>
+    <div class="stats">
+      <div class="stat"><b>${state.requests.length}</b><span>Pending requests</span></div>
+      <div class="stat"><b>${state.users.length}</b><span>Members</span></div>
+      <div class="stat"><b>${state.groups.length}</b><span>Groups</span></div>
+      <div class="stat"><b>${state.documents.length}</b><span>Documents</span></div>
+    </div>
+    <div class="card">
+      <div class="row-between"><h3 style="margin:0">Admin Profile</h3></div>
+      <div class="row" style="align-items:center;margin-bottom:12px">
+        ${avatarHTML(u, 48)}
+        <div style="flex:1;min-width:0;margin-left:4px">
+          <b style="display:block;font-size:15px">${esc(u.fullName)}</b>
+          <span class="small muted">Tap the photo to change it</span>
+        </div>
+        <button class="btn sm" onclick="openMyProfile()">✏️ Edit</button>
+      </div>
+      <button class="btn primary block" onclick="openMyProfile()">📷 Change Photo & Name</button>
+    </div>
+    <div class="card">
+      <div class="row-between">
+        <h3 style="margin:0">📂 Groups & Activities</h3>
+        <span class="pill">${state.groups.length}</span>
+      </div>
+      <button class="btn primary block" onclick="createGroup()">+ Create Group</button>
+      <p class="tiny muted" style="margin:10px 0 12px;">
+        💡 Inside a group → "+ New Activity" → write Q1, Q2, … → tick target groups → Send & Publish.<br>
+        Members answer via the answer rectangle, and everything shows in <b>Finished Activities</b>.
+      </p>
+      ${renderAdminsFolder()}
+      ${groupsHtml}
+      ${renderListOfMembers(true)}
+    </div>
+    <div class="card">
+      <div class="row-between">
+        <h3 style="margin:0">Sign-up requests</h3>
+        ${state.requests.length ? `<span class="pill warn">${state.requests.length} waiting</span>` : ''}
+      </div>
+      ${requests}
+    </div>`;
+}
+
+/* ───────────── Actions ───────────── */
+function createGroup(){
+  const u = currentUser();
+  if(!u || u.role !== 'admin') return;
+  const name = nextGroupName();
+  const g = { id: uid(), name, memberIds: [], activities: [] };
+  state.groups.push(g);
+  ui.folderOpen['group:' + g.id] = true;
+  notify(u.id, `${u.fullName} created ${name}`, 'group');
+  save(); render();
+}
+function deleteGroup(id){
+  const u = currentUser();
+  if(!u || u.role !== 'admin') return;
+  const g = state.groups.find(x => x.id === id); if(!g) return;
+  showConfirm('Delete Group', `Delete "${g.name}"? All activities, questions, and answers will be removed.`, () => {
+    state.groups = state.groups.filter(x => x.id !== id); save(); render();
+  }, 'Delete');
+}
+function addActivity(groupId){
+  const u = currentUser();
+  if(!u || u.role !== 'admin'){ alert('Only admins can create activities.'); return; }
+  const g = state.groups.find(x => x.id === groupId); if(!g) return;
+  g.activities = g.activities || [];
+  const name = nextActivityName(g);
+  const a = { id: uid(), name, creatorId: u.id, createdAt: now(),
+    sent: false, sentAt: null, targetGroupIds: [g.id], questions: [] };
+  g.activities.push(a);
+  ui.folderOpen['activity:' + g.id + ':' + a.id] = true;
+  save(); render();
+}
+function deleteActivity(groupId, activityId){
+  const u = currentUser();
+  if(!u || u.role !== 'admin') return;
+  const g = state.groups.find(x => x.id === groupId); if(!g) return;
+  const a = g.activities.find(x => x.id === activityId); if(!a) return;
+  showConfirm('Delete Activity', `Delete "${a.name}" and all its answers?`, () => {
+    g.activities = g.activities.filter(x => x.id !== activityId); save(); render();
+  }, 'Delete');
+}
+function toggleActivityTarget(groupId, activityId, targetGroupId){
+  const u = currentUser();
+  if(!u || u.role !== 'admin') return;
+  const g = state.groups.find(x => x.id === groupId); if(!g) return;
+  const a = (g.activities || []).find(x => x.id === activityId); if(!a) return;
+  if(a.sent) return;
+  a.targetGroupIds = a.targetGroupIds || [];
+  const i = a.targetGroupIds.indexOf(targetGroupId);
+  if(i > -1) a.targetGroupIds.splice(i, 1);
+  else a.targetGroupIds.push(targetGroupId);
+  save(); render();
+}
+function addQuestion(groupId, activityId){
+  const u = currentUser();
+  if(!u || u.role !== 'admin'){ alert('Only admins can add questions.'); return; }
+  const g = state.groups.find(x => x.id === groupId); if(!g) return;
+  const a = (g.activities || []).find(x => x.id === activityId); if(!a) return;
+  if(a.sent){ alert('This activity was already sent.'); return; }
+  a.questions = a.questions || [];
+  a.questions.push({ id: uid(), text: '', answers: {} });
+  save(); render();
+  setTimeout(() => {
+    const inputs = document.querySelectorAll('.q-admin-box .q-input');
+    if(inputs.length) inputs[inputs.length - 1].focus();
+  }, 0);
+}
+function deleteQuestion(groupId, activityId, questionId){
+  const u = currentUser();
+  if(!u || u.role !== 'admin') return;
+  const g = state.groups.find(x => x.id === groupId); if(!g) return;
+  const a = (g.activities || []).find(x => x.id === activityId); if(!a) return;
+  if(a.sent) return;
+  showConfirm('Delete Question', `Delete this question and all its answers?`, () => {
+    a.questions = (a.questions || []).filter(x => x.id !== questionId); save(); render();
+  }, 'Delete');
+}
+function updateQuestion(groupId, activityId, questionId, text){
+  const u = currentUser();
+  if(!u || u.role !== 'admin') return;
+  const g = state.groups.find(x => x.id === groupId); if(!g) return;
+  const a = (g.activities || []).find(x => x.id === activityId); if(!a) return;
+  if(a.sent) return;
+  const q = (a.questions || []).find(x => x.id === questionId); if(!q) return;
+  q.text = text; save();
+}
+function sendActivity(groupId, activityId){
+  const u = currentUser();
+  if(!u || u.role !== 'admin') return;
+  const g = state.groups.find(x => x.id === groupId); if(!g) return;
+  const a = (g.activities || []).find(x => x.id === activityId); if(!a) return;
+  if(!a.questions || !a.questions.length){
+    alert('Please add at least one question before sending.');
+    return;
+  }
+  const targets = a.targetGroupIds && a.targetGroupIds.length ? a.targetGroupIds : [g.id];
+  const targetNames = targets.map(gid => {
+    const tg = state.groups.find(x => x.id === gid);
+    return tg ? tg.name : '?';
+  }).join(', ');
+  showConfirm('Send & Publish',
+    `Send "${a.name}" to: ${targetNames}\n\nAfter sending, members can answer via the answer rectangle, and the activity + all answers will appear on every member's Home.`,
+    () => {
+      a.sent = true;
+      a.sentAt = now();
+      notify(u.id, `📤 ${u.fullName} sent "${a.name}" to ${targetNames}`, 'activity',
+        { groupId, activityId });
+      save(); render();
+    }, 'Send & Publish');
+}
+function saveAnswer(groupId, activityId, questionId){
+  const u = currentUser(); if(!u) return;
+  const g = state.groups.find(x => x.id === groupId); if(!g) return;
+  const a = (g.activities || []).find(x => x.id === activityId); if(!a) return;
+  const q = (a.questions || []).find(x => x.id === questionId); if(!q) return;
+  const textarea = document.getElementById('ans-' + questionId);
+  const text = textarea ? textarea.value.trim() : '';
+  if(!text){ alert('Please write an answer before saving.'); return; }
+  q.answers = q.answers || {};
+  q.answers[u.id] = { text, date: now() };
+  save();
+  ui.qMsg[q.id] = 'saved';
+  ui.qOpen[q.id] = false;
+  notify(u.id, `${u.fullName} answered a question in "${a.name}"`, 'answer', { groupId, activityId });
+  render();
+  setTimeout(() => { delete ui.qMsg[q.id]; }, 2500);
+}
+function deleteAnswer(groupId, activityId, questionId){
+  const u = currentUser(); if(!u) return;
+  const g = state.groups.find(x => x.id === groupId); if(!g) return;
+  const a = (g.activities || []).find(x => x.id === activityId); if(!a) return;
+  const q = (a.questions || []).find(x => x.id === questionId); if(!q) return;
+  showConfirm('Delete Answer', 'Remove your answer?', () => {
+    if(q.answers) delete q.answers[u.id]; save(); render();
+  }, 'Delete');
+}
+function toggleGroupMember(groupId, memberId){
+  const u = currentUser();
+  if(!u || u.role !== 'admin') return;
+  const g = state.groups.find(x => x.id === groupId); if(!g) return;
+  g.memberIds = g.memberIds || [];
+  const i = g.memberIds.indexOf(memberId);
+  if(i > -1) g.memberIds.splice(i, 1); else g.memberIds.push(memberId);
+  save(); render();
+}
+function approveRequest(id){
+  const r = state.requests.find(x => x.id === id); if(!r) return;
+  showConfirm('Approve Request', `Approve ${r.fullName}?`, () => {
+    state.users.push({ id: uid(), fullName: r.fullName, password: r.password,
+      role: 'member', approved: true, joined: now(), notifSeenAt: now(), photo: null });
+    state.requests = state.requests.filter(x => x.id !== id);
+    state.notifications = state.notifications.filter(n => n.requestId !== id);
+    notify(null, `${r.fullName} was approved`, 'approve');
+    save(); render();
+  }, 'Approve');
+}
+function rejectRequest(id){
+  const r = state.requests.find(x => x.id === id); if(!r) return;
+  showConfirm('Reject Request', `Reject ${r.fullName}?`, () => {
+    state.requests = state.requests.filter(x => x.id !== id);
+    state.notifications = state.notifications.filter(n => n.requestId !== id);
+    notify(null, `Request from ${r.fullName} was rejected`, 'reject');
+    save(); render();
+  }, 'Reject');
+}
+function removeMember(id){
+  const u = currentUser();
+  if(!u || u.role !== 'admin') return;
+  const m = state.users.find(x => x.id === id); if(!m) return;
+  showConfirm('Remove Member', `Remove ${m.fullName}? Also deletes their readings and answers.`, () => {
+    state.users = state.users.filter(x => x.id !== id);
+    state.readings = state.readings.filter(r => r.userId !== id);
+    state.notes = state.notes.filter(n => n.userId !== id);
+    state.groups.forEach(g => {
+      g.memberIds = (g.memberIds || []).filter(mid => mid !== id);
+      (g.activities || []).forEach(a => {
+        (a.questions || []).forEach(q => {
+          if(q.answers && q.answers[id]) delete q.answers[id];
+        });
+      });
+    });
+    save(); render();
+  }, 'Remove');
+}
+function render(){
+  const u = currentUser();
+  document.getElementById('root').innerHTML = u ? renderApp(u) : renderAuth();
+  translateDOM();
+  if(!u){
+    const first = document.querySelector('.auth-card input');
+    if(first && window.innerWidth > 700) first.focus();
+  }
+}
+langObserver.observe(document.getElementById('root'), {childList:true, subtree:true, characterData:true});
+langObserver.observe(document.getElementById('modal-root'), {childList:true, subtree:true, characterData:true});
+render();
+</script>
+</body>
+</html>
